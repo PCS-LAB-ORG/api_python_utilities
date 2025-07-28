@@ -11,6 +11,9 @@ import xml.etree.ElementTree as etree
 
 from prismacloud.api import pc_api
 
+################################################################################
+# This section can be removed or commented if the settings object below is used. 
+# This is for parsing credentials from a file in the user home.
 env_keys = os.environ.keys()
 if "HOME" in env_keys:
     user_home = os.environ.get("HOME")
@@ -24,6 +27,7 @@ with open(f"{user_home}/.prismacloud/credentials.json", 'r') as creds:
     DOMAIN = creds_json["url"]
     PRISMA_ACCESS_KEY = creds_json["identity"]
     PRISMA_SECRET_KEY = creds_json["secret"]
+#################################################################################
 
 # Settings for Prisma Cloud Enterprise Edition
 settings = {
