@@ -7,36 +7,18 @@ import os
 import json
 import pprint
 import requests
-
-
-def http_logging():
-    #############################################################################################
-    # This section would turn on extra logging for http requests
-    #############################################################################################
-    import logging
-
-    # These two lines enable debugging at httplib level (requests->urllib3->http.client)
-    # You will see the REQUEST, including HEADERS and DATA, and RESPONSE with HEADERS but without DATA.
-    # The only thing missing will be the response.body which is not logged.
-    try:
-        import http.client as http_client
-    except ImportError:
-        # Python 2
-        import httplib as http_client
-    http_client.HTTPConnection.debuglevel = 1
-
-    # # You must initialize logging, otherwise you'll not see debug output.
-    logging.basicConfig()
-    logging.getLogger().setLevel(logging.DEBUG)
-    requests_log = logging.getLogger("requests.packages.urllib3")
-    requests_log.setLevel(logging.DEBUG)
-    requests_log.propagate = True
-    ####################################################################################
-# http_logging()
+import xml.etree.ElementTree as etree
 
 from prismacloud.api import pc_api
 
-user_home = os.environ.get("HOME")
+env_keys = os.environ.keys()
+if "HOME" in env_keys:
+    user_home = os.environ.get("HOME")
+elif "USERPROFILE" in env_keys:
+    user_home = os.environ.get("USERPROFILE")
+else:
+    print("HOME and USERPROFILE are not found in environment variables. Assuming '.'")
+    user_home = "."
 with open(f"{user_home}/.prismacloud/credentials.json", 'r') as creds:
     creds_json = json.load(creds)[0]
     DOMAIN = creds_json["url"]
@@ -57,7 +39,7 @@ pc_api.configure(settings=settings)
 payload = ''
 
 format = "cyclonedx"
-material = "oss"
+material = "all"
 
 headers = {
   'Content-Type': 'application/json; charset=UTF-8',
@@ -71,4 +53,13 @@ url = f"{settings['url']}/bridgecrew/api/v1/bom/getBOMReport/{repository_id}?for
 response = requests.request("GET", url, headers=headers, data=payload)
 response.raise_for_status()
 js_res = json.loads(response.text)
-pprint.pprint(js_res)
+for format in js_res["bomResponse"]:
+    res = requests.request("GET", format["reportLink"], verify=False)
+    res.raise_for_status()
+    filename = res.headers["Content-Disposition"].removeprefix("attachment; filename = ").replace("\"", "")
+    print(f"{format['format']} {filename}")
+    with open(filename, "w") as file:
+        # The contexts can be written directly but, this will format and indent XML
+        root = etree.fromstring(res.text)
+        etree.indent(root)
+        file.writelines(etree.tostring(root, encoding="unicode"))
