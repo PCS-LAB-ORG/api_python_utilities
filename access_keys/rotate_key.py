@@ -106,6 +106,9 @@ elif args.access_key_file:
     line = access_key_file.readline()
     access_key = line.split(",")[1].removesuffix("\n")
 
+if not access_key and not args.service_account:
+    quit("Either access key, access key file, or service account must be given.")
+
 # ALT user credentials solution
 if args.DOMAIN:
     DOMAIN = args.DOMAIN
@@ -193,22 +196,30 @@ user_list = json.loads(response.text)
 user_key_list = []
 found_key = {}
 for user in user_list:
-    if args.service_account:
-        if args.service_account != user["username"]:
+    if args.service_account and args.service_account != user["username"]:
             continue
-    if user["type"] != "SERVICE_ACCOUNT":
-        quit(f"Only service accounts can be used. {args.service_account} is type {user['type']}")
     for key in access_key_list:
+        # These two handle when no access key is given 
+        if args.access_key and key["id"] != access_key:
+            continue
         # pprint.pprint(key) # debug
         # user['username'] is the service account name when it's a 
         # service account and user's email otherwise
         if user["username"] == key["createdBy"]:
+            if user["type"] != "SERVICE_ACCOUNT":
+                quit(f"Only service accounts can be used. {args.service_account} is type {user['type']}")
             print(f"Matched user:key on username {user['username']}")
             user_key_list.append(key)
             if access_key == key['id']:
                 # pprint.pprint(user) # debug
                 key_name = key["name"]
                 found_key = key
+                # This inner loop finds possible second key belonging to user. This is used to check if 
+                # another key can be made
+                for other_key in access_key_list:
+                    if other_key["createdBy"] == user["username"] and other_key["id"] != key["id"]:
+                        user_key_list.append(other_key)
+                        break;
                 break;
 
 # This assumes that service account can only be changed by creator. SOC creates them
