@@ -2,3 +2,5 @@
 *.csv
 logs/
 *.zip
+*cred*
+__pycache__/
