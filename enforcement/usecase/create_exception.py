@@ -325,20 +325,20 @@ else:
 
 # if either case passes
 if c == "y":
-    rule_list = get_enforcement_rules()
+    remote_enforcement_rule_list = get_enforcement_rules()
     matching_name_id = "" # Blank implies the rule does not exist
     matching_rule = {}
-    updated_exception_repo_list = read_local_repo_list()
-    repos_in_exceptions = set()
-    for repo in updated_exception_repo_list:
-        repos_in_exceptions.add(repo["fullName"])
+    local_repo_list = read_local_repo_list()
+    repos_in_local_list = set()
+    for repo in local_repo_list:
+        repos_in_local_list.add(repo["fullName"])
 
-    for rule in rule_list["rules"]:
-        if exception_name == rule["name"]:
+    for remote_rule in remote_enforcement_rule_list["rules"]:
+        if exception_name == remote_rule["name"]:
             print("Matching exception found")
-            print(rule)
-            matching_name_id = rule["id"]
-            matching_rule = rule
+            print(remote_rule)
+            matching_name_id = remote_rule["id"]
+            matching_rule = remote_rule
         else:
             # This isn't the prettiest code but, I prefer easy to follow logic 
             # This if statement makes a single list of items that exist in both lists
@@ -346,13 +346,13 @@ if c == "y":
             # error code if you try to create or update an exception with a repo that 
             # another exception already has. 
             rule_repo_list = set()
-            for repo in rule["repositories"]:
+            for repo in remote_rule["repositories"]:
                 rule_repo_list.add(repo["accountName"])
 
-            if len(list(rule_repo_list.intersection(repos_in_exceptions))) > 0:
-                quit(f"Repos being added to rule already belong to an exception that exists. This will cause an API error code: {rule}")
+            if len(list(rule_repo_list.intersection(repos_in_local_list))) > 0:
+                quit(f"Repos being added to rule already belong to an exception that exists. This will cause an API error code: {remote_rule}")
 
     repo_id_and_name_list = []
-    for repo in updated_exception_repo_list:
+    for repo in local_repo_list:
         repo_id_and_name_list.append({"accountId": repo["id"], "accountName": repo["fullName"]})
     add_rule(repo_id_and_name_list, matching_name_id)
