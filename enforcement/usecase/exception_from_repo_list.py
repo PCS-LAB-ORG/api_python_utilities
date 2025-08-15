@@ -180,7 +180,7 @@ def flatten_json(nested_json):
 
 # https://pan.dev/prisma-cloud/api/code/get-vcs-repository-page/
 def get_vcs_repository_page(local_file):
-    repo_filter = {"filters": {"archived": ["true"]}}
+    repo_filter = {"filters": {"archived": ["false"]}, "pageConfig": {"page": 0, "pageSize": 1000}}
     payload = json.dumps(repo_filter)
     print("post get_vcs_repository_page")
     url = f"{settings['url']}/code/api/v1/vcs-repository/repositories"
