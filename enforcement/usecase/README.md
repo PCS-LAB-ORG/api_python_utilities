@@ -11,11 +11,15 @@ create_exception_from_repo_list.py [-h] --file FILE
 
 ## Description:
 This script is meant to do two things. 
+
 First, it will query a list of repositories from Prisma and compare to a local list of repos that may exist and writes it to a local file.
+
 Second, it prompts to create/update an enforcement exception for these repos with the enforcement rule definition.
 
 ## Prerequisite steps:
+
 Python 3.11. 3.6-3.12 are expected to work.
+
 Python libraries required: requests, prismacloud-api
 
 ## Run the script
