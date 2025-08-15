@@ -37,6 +37,10 @@ parser.add_argument("--file", required=True, help="Relative file path csv format
 parser.add_argument("--exception_name", required=False, help="The name of the exception that you are creating or updating. Without this it will ask to write repos to a local file --file")
 parser.add_argument("--force", action='store_true', default=False, help="Automatically accept all prompts. (equivalent to passing true, yes, proceed, etc.)")
 parser.add_argument("--verbose", action='store_true', default=False, help="Some extra logging for http calls and debugging.")
+
+# This doesn't quite work yet. 
+# parser.add_argument("--repo_filter", required=False, default={"filters": {"archived": ["true"]}}, help="This is applied to select the repos. Empty string should select for all repos.")
+
 parser.add_argument("--exception_definition_file", help="Unimplemented. Currently the codeCategories flags are hardcoded as variable 'exception_definition'.")
 parser.add_argument(
     "--PRISMA_DOMAIN",
@@ -57,7 +61,8 @@ parser.add_argument(
     help="Default environment variable PRISMA_SECRET_KEY",
 )
 args, unknown = parser.parse_known_args()
-print(f"These arguments are not recognized.\n{unknown}\nProceeding...")
+if len(unknown) != 0:
+    print(f"These arguments are not recognized.\n{unknown}\nProceeding...")
 
 if not (args.PRISMA_DOMAIN or args.PRISMA_ACCESS_KEY or args.PRISMA_SECRET_KEY):
     quit("Unable to authenticate without domain, access, and secret keys")
@@ -175,7 +180,8 @@ def flatten_json(nested_json):
 
 # https://pan.dev/prisma-cloud/api/code/get-vcs-repository-page/
 def get_vcs_repository_page(local_file):
-    payload = json.dumps({"filters": {"archived": ["true"]}})
+    repo_filter = {"filters": {"archived": ["true"]}}
+    payload = json.dumps(repo_filter)
     print("post get_vcs_repository_page")
     url = f"{settings['url']}/code/api/v1/vcs-repository/repositories"
     response = requests.request("POST", url, headers=headers, data=payload)
@@ -198,23 +204,15 @@ def get_vcs_repository_page(local_file):
 
     if os.path.exists(local_file):
         overwrite = input(f"Overwrite local repo list {local_filename}\n(y) >>> ")
-        if overwrite == "y":
-            with open(local_filename, "w", newline="") as local_file:
-                writer = csv.DictWriter(f=local_file, fieldnames=key_list)
-                writer.writeheader()
-                writer.writerows(repo_list)
-            print("Quitting since the newly written file is the same as the remote state.")
-            quit()
-        print(f"Local repo list file exists as file {local_filename} and will be used to compare current exception rule state.")
-        return repo_list, key_list
-    else:
-        print(f"local repo list does not exist. Writing now to {local_filename}")
-        with open(local_filename, "w", newline="") as local_file:
-            writer = csv.DictWriter(f=local_file, fieldnames=key_list)
-            writer.writeheader()
-            writer.writerows(repo_list)
-        print("Quitting since the newly written file is the same as the remote state.")
-        quit()
+        if overwrite != "y":
+            return repo_list, key_list
+    with open(local_filename, "w", newline="") as local_file:
+        writer = csv.DictWriter(f=local_file, fieldnames=key_list)
+        writer.writeheader()
+        writer.writerows(repo_list)
+    print("The newly written file is the same as the remote state.")
+    print(f"Local repo list file exists as file {local_filename} and will be used to compare current exception rule state.")
+    return repo_list, key_list
         
 def read_local_repo_list():
     repositories = []
@@ -298,7 +296,7 @@ def add_rule(archived_repo_id_name, matching_name_id):
     # url = f"{settings['url']}/bridgecrew/api/v1/enforcement-rules"
     response = requests.request(request_method, url, headers=headers, data=payload)
     response.raise_for_status()
-    print(response.text)
+    print(f"Created/Updated Exception\n{response.text}")
 
 if args.exception_name:
     exception_name = args.exception_name # "Archived Repo Exception4"
