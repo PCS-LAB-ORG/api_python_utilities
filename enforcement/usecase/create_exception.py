@@ -10,9 +10,14 @@ import argparse
 from prismacloud.api import pc_api
 
 parser = argparse.ArgumentParser(description='''
+Description:
+This script is meant to do two things. 
+First, it will query a list of repositories from Prisma and compare to a local list of repos that may exist and writes it to a local file.
+Second, it prompts to create/update an enforcement exception for these repos with the enforcement rule definition.
+
 Prerequisite steps:
 Python 3.11. 3.6-3.12 are expected to work.
-Python libraries required: requests, prismacloud-api, argparse
+Python libraries required: requests, prismacloud-api
 
 Run the script
 python create_exception.py <args>
@@ -30,7 +35,8 @@ Core Use Cases
 ''', formatter_class=argparse.RawDescriptionHelpFormatter)
 parser.add_argument("--file", required=True, help="Relative file path csv formatted set of repositories containing at least 'id' and 'fullName'. The file created will have this format.")
 parser.add_argument("--exception_name", required=False, help="The name of the exception that you are creating or updating. Without this it will ask to write repos to a local file --file")
-parser.add_argument("--force", action='store_true', default=False, help="Automatically accept all prompts.")
+parser.add_argument("--force", action='store_true', default=False, help="Automatically accept all prompts. (equivalent to passing true, yes, proceed, etc.)")
+parser.add_argument("--verbose", action='store_true', default=False, help="Some extra logging for http calls and debugging.")
 parser.add_argument("--exception_definition_file", help="Unimplemented. Currently the codeCategories flags are hardcoded as variable 'exception_definition'.")
 parser.add_argument(
     "--PRISMA_DOMAIN",
@@ -50,7 +56,8 @@ parser.add_argument(
     required=False,
     help="Default environment variable PRISMA_SECRET_KEY",
 )
-args = parser.parse_args()
+args, unknown = parser.parse_known_args()
+print(f"These arguments are not recognized.\n{unknown}\nProceeding...")
 
 if not (args.PRISMA_DOMAIN or args.PRISMA_ACCESS_KEY or args.PRISMA_SECRET_KEY):
     quit("Unable to authenticate without domain, access, and secret keys")
@@ -189,15 +196,6 @@ def get_vcs_repository_page(local_file):
     key_list.remove("url")
     key_list.insert(0, "url")
 
-    # if local file exists
-    #   overwrite ?
-    #       write file
-    #       quit() since local = remote
-    #   else
-    #       proceed without writing
-    # else
-    #   write file
-    #   quit() since local = remote
     if os.path.exists(local_file):
         overwrite = input(f"Overwrite local repo list {local_filename}\n(y) >>> ")
         if overwrite == "y":
@@ -295,7 +293,8 @@ def add_rule(archived_repo_id_name, matching_name_id):
             "x-redlock-auth": pc_api.token, # Can I use the Authorization header for both calls? 
         }
     payload = json.dumps(exception_definition)
-    http_logging()
+    if args.verbose:
+        http_logging()
     # url = f"{settings['url']}/bridgecrew/api/v1/enforcement-rules"
     response = requests.request(request_method, url, headers=headers, data=payload)
     response.raise_for_status()
@@ -333,10 +332,11 @@ if c == "y":
     for repo in local_repo_list:
         repos_in_local_list.add(repo["fullName"])
 
+    rule_repo_list = set()
     for remote_rule in remote_enforcement_rule_list["rules"]:
         if exception_name == remote_rule["name"]:
             print("Matching exception found")
-            print(remote_rule)
+            print(remote_rule["name"])
             matching_name_id = remote_rule["id"]
             matching_rule = remote_rule
         else:
@@ -345,12 +345,11 @@ if c == "y":
             # then checks if any are found. When the API call is made there is an ambiguous 
             # error code if you try to create or update an exception with a repo that 
             # another exception already has. 
-            rule_repo_list = set()
             for repo in remote_rule["repositories"]:
                 rule_repo_list.add(repo["accountName"])
-
-            if len(list(rule_repo_list.intersection(repos_in_local_list))) > 0:
-                quit(f"Repos being added to rule already belong to an exception that exists. This will cause an API error code: {remote_rule}")
+    intersection_list = list(rule_repo_list.intersection(repos_in_local_list))
+    if len(intersection_list) > 0:
+        quit(f"Repos being added to rule already belong to an exception that exists. This will cause an API error code: \nRule: {remote_rule}\nIntersecting Repos: {intersection_list}")
 
     repo_id_and_name_list = []
     for repo in local_repo_list:
