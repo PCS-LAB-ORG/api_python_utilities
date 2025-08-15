@@ -23,24 +23,32 @@ python create_exception.py <args>
 
 ### options:
   -h, --help            show this help message and exit
+
   --file FILE           Relative file path csv formatted set of repositories
                         containing at least 'id' and 'fullName'. The file
                         created will have this format.
+  
   --exception_name EXCEPTION_NAME
                         The name of the exception that you are creating or
                         updating. Without this it will ask to write repos to a
                         local file --file
+  
   --force               Automatically accept all prompts. (equivalent to
                         passing true, yes, proceed, etc.)
+  
   --verbose             Some extra logging for http calls and debugging.
+  
   --exception_definition_file EXCEPTION_DEFINITION_FILE
                         Unimplemented. Currently the codeCategories flags are
                         hardcoded as variable 'exception_definition'.
+  
   --PRISMA_DOMAIN PRISMA_DOMAIN
                         like https://api.ca.prismacloud.io for Canada. Default
                         environment variable PRISMA_DOMAIN
+  
   --PRISMA_ACCESS_KEY PRISMA_ACCESS_KEY
                         Default environment variable PRISMA_ACCESS_KEY
+  
   --PRISMA_SECRET_KEY PRISMA_SECRET_KEY
                         Default environment variable PRISMA_SECRET_KEY
 
