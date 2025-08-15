@@ -185,7 +185,13 @@ def get_vcs_repository_page(local_file):
     print("post get_vcs_repository_page")
     url = f"{settings['url']}/code/api/v1/vcs-repository/repositories"
     response = requests.request("POST", url, headers=headers, data=payload)
-    response.raise_for_status()
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError as e:
+        if e.response.status_code == 500:
+            # Check the code
+            print("This happens with a response that takes too long to process.")
+            quit(e)
     repository_list = json.loads(response.text)
     key_list = set()
     repo_list = []
