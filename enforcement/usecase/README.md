@@ -1,4 +1,4 @@
-# Archived repo exception utils
+# Exception By Repo List
 
 ## usage: 
 create_exception_from_repo_list.py [-h] --file FILE
