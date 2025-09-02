@@ -188,7 +188,7 @@ def get_vcs_repository_page(local_file):
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError as e:
-        if e.response.status_code == 500:
+        if e.response.status_code >= 500 and e.response.status_code < 600:
             # Check the code
             print("This happens with a response that takes too long to process.")
             quit(e)
@@ -311,6 +311,8 @@ if args.file:
 
 if compare_local(local_filename):
     print("There are no differences between the local file and the repo list in Prisma.")
+    # This check is just to pull the repo list and not the list associated with an exception.
+    # Thus continue
 
 '''
 This is the point at which we go from collecting a repo list to applying an exception to it. 
@@ -353,7 +355,8 @@ if c == "y":
                 rule_repo_list.add(repo["accountName"])
     intersection_list = list(rule_repo_list.intersection(repos_in_local_list))
     if len(intersection_list) > 0:
-        quit(f"Repos being added to rule already belong to an exception that exists. This will cause an API error code: \nRule: {remote_rule}\nIntersecting Repos: {intersection_list}")
+        quit(f"Repos being added to rule already belong to an exception that exists. This will cause an API error code: \nRule: {matching_rule}\nIntersecting Repos: {intersection_list}")
+        # In the future consider asking to create a rule that only include those not already in another rule or removing those 
 
     repo_id_and_name_list = []
     for repo in local_repo_list:
