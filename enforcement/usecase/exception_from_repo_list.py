@@ -20,7 +20,7 @@ Python 3.11. 3.6-3.12 are expected to work.
 Python libraries required: requests, prismacloud-api
 
 Run the script
-python create_exception.py <args>
+python .\exception_from_repo_list.py <args>
 ''',
 epilog='''
 Core Use Cases
@@ -180,7 +180,7 @@ def flatten_json(nested_json):
 
 # https://pan.dev/prisma-cloud/api/code/get-vcs-repository-page/
 def get_vcs_repository_page(local_file):
-    repo_filter = {"filters": {"archived": ["false"]}, "pageConfig": {"page": 0, "pageSize": 1000}}
+    repo_filter = {"filters": {"archived": ["true"]}, "pageConfig": {"page": 0, "pageSize": 1000}}
     payload = json.dumps(repo_filter)
     print("post get_vcs_repository_page")
     url = f"{settings['url']}/code/api/v1/vcs-repository/repositories"
