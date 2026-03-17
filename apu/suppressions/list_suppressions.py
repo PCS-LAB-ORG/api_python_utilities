@@ -7,47 +7,9 @@ from pathlib import Path
 import pprint
 import requests
 import json
-from prismacloud.api import pc_api
-
-
-def flatten_json(nested_json):
-    """
-    Flattens a nested JSON object into a single-level dictionary.
-    """
-    out = {}
-
-    def flatten(x, name=''):
-        if type(x) is dict:
-            for a in x:
-                flatten(x[a], name + a + '.')
-        elif type(x) is list:
-            i = 0
-            for a in x:
-                flatten(a, name + str(i) + '.')
-                i += 1
-        else:
-            out[name[:-1]] = x
-
-    flatten(nested_json)
-    return out
-
-# import sys, os
-# sys.path.append(os.path.abspath(f"utils"))
-# import http_logging
-# http_logging.http_logging()
-
-cwd = os.path.dirname(os.path.realpath(__file__))
-
-
-from prismacloud.api import pc_api
 from apu.utils import login, http_logging # importing this should trigger the login procedure
-# http_logging.http_logging()
 
-
-headers = {
-  'Accept': 'application/json; charset=UTF-8',
-  'Authorization': pc_api.token
-}
+login.login(redlock=False) # Authorization header
 
 url = f"{settings['url']}/code/api/v1/suppressions"
 
@@ -84,6 +46,7 @@ for suppression in js_res:
         case _:
             print(suppression)
 
+cwd = os.path.dirname(os.path.realpath(__file__))
 with open(f"{cwd}/output/resources.json", "w") as resources_file:
     json.dump(resources, resources_file, indent=4)
 with open(f"{cwd}/output/tags.json", "w") as tags_file:
