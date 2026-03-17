@@ -7,11 +7,12 @@ import os, sys
 import json
 import pprint
 import requests
+from pathlib import Path
+
 
 from prismacloud.api import pc_api
 
-user_home = os.environ.get("HOME")
-with open(f"{user_home}/.prismacloud/credentials.json", 'r') as creds:
+with open(f"{Path.home()}/.prismacloud/credentials.json", 'r') as creds:
     creds_json = json.load(creds)[0]
     print(creds_json)
     DOMAIN = creds_json["url"]

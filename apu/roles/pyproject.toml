@@ -1,0 +1,43 @@
+[build-system]
+requires = ["hatchling>=1.5.0"] # Or a more specific version
+build-backend = "hatchling.build"
+
+[project]
+name = "apu"
+version = "0.1.1"
+authors = [
+    { name="Justin Miles", email="jumiles@paloaltonetworks.com" },
+]
+description = "A short description of your package."
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "aiohttp",
+    "argparse",
+    "asyncio",
+    "boto3",
+    "click",
+    "datetime",
+    "http_logging",
+    "pandas",
+    "requests",
+    "rx"
+]
+
+[project.urls]
+"Homepage" = "https://github.com/PCS-LAB-ORG/api_python_utilities"
+
+[tool.hatch.build]
+include = [
+    "*.py"
+]
+exclude = [
+    "*.pyc",
+    ".ipynb_checkpoints",
+    "*cred*",
+    "log*"
+]
