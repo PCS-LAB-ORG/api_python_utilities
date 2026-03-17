@@ -8,9 +8,9 @@ import pprint
 import os, sys
 import requests
 
-from prismacloud.api import pc_api
+# from prismacloud.api import pc_api
 from apu.utils import login, http_logging # importing this should trigger the login procedure
-http_logging.http_logging()
+# http_logging.http_logging()
 
 # https://pan.dev/prisma-cloud/api/code/get-vcs-repository-page/
 def get_vcs_repository_page(data=''):
@@ -23,4 +23,5 @@ def get_vcs_repository_page(data=''):
     return repository_list
 
 if __name__ == "__main__":
+    login.login()
     get_vcs_repository_page()
