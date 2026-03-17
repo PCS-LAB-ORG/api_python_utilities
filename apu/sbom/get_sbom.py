@@ -10,51 +10,19 @@ import requests
 import xml.etree.ElementTree as etree
 
 from prismacloud.api import pc_api
+from apu.utils import login, http_logging # importing this should trigger the login procedure
+# http_logging.http_logging()
 
-################################################################################
-# This section can be removed or commented if the settings object below is used. 
-# This is for parsing credentials from a file in the user home.
-env_keys = os.environ.keys()
-if "HOME" in env_keys:
-    user_home = os.environ.get("HOME")
-elif "USERPROFILE" in env_keys:
-    user_home = os.environ.get("USERPROFILE")
-else:
-    print("HOME and USERPROFILE are not found in environment variables. Assuming '.'")
-    user_home = "."
-with open(f"{user_home}/.prismacloud/credentials.json", 'r') as creds:
-    creds_json = json.load(creds)[0]
-    DOMAIN = creds_json["url"]
-    PRISMA_ACCESS_KEY = creds_json["identity"]
-    PRISMA_SECRET_KEY = creds_json["secret"]
-#################################################################################
-
-# Settings for Prisma Cloud Enterprise Edition
-settings = {
-    "url": DOMAIN,
-    "identity": PRISMA_ACCESS_KEY,
-    "secret": PRISMA_SECRET_KEY
-}
-# os.environ["PRISMA_ACCESS_KEY"] # using an environment variable
-pc_api.debug = False
-
-pc_api.configure(settings=settings)
 
 payload = ''
 
 format = "cyclonedx"
 material = "all"
 
-headers = {
-  'Content-Type': 'application/json; charset=UTF-8',
-  'Accept': '*/*',
-  'x-redlock-auth': pc_api.token
-}
-
 repository_id = ""
 
 url = f"{settings['url']}/bridgecrew/api/v1/bom/getBOMReport/{repository_id}?format={format}&material={material}"
-response = requests.request("GET", url, headers=headers, data=payload)
+response = requests.request("GET", url, headers=login.headers, data=payload)
 response.raise_for_status()
 js_res = json.loads(response.text)
 for format in js_res["bomResponse"]:

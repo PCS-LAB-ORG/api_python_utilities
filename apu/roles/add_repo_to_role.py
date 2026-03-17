@@ -12,30 +12,8 @@ import requests
 from datetime import datetime
 
 from prismacloud.api import pc_api
-
-## LOGIN Portion
-# These 3 lines will put the directory of the script onto 
-# the path and read a file called creds.py and that holds 
-# my credentials in property file format which is also 
-# valid python code.
-from pathlib import Path
-sys.path.append(os.path.abspath(f"."))
-from creds_lab import PRISMA_ACCESS_KEY, PRISMA_SECRET_KEY
-
-# Settings for Prisma Cloud Enterprise Edition
-settings = {
-    "url": "https://api.ca.prismacloud.io/",
-    "identity": PRISMA_ACCESS_KEY,
-    "secret": PRISMA_SECRET_KEY
-}
-# os.environ["PRISMA_ACCESS_KEY"] # using an environment variable
-
-pc_api.configure(settings=settings)
-
-# pc_api.debug = True
-
-# print("\nAt this point you have an active token")
-# print(pc_api.token)
+from apu.utils import login, http_logging # importing this should trigger the login procedure
+# http_logging.http_logging()
 
 
 repo_array = []

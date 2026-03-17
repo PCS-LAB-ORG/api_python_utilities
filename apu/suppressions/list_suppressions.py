@@ -39,18 +39,10 @@ def flatten_json(nested_json):
 cwd = os.path.dirname(os.path.realpath(__file__))
 
 
-# Settings for Prisma Cloud Enterprise Edition
-with open(f"{Path.home()}/.prismacloud/credentials.json", "r") as creds:
-    js_creds = json.load(creds)[0]
-    settings = {
-        "url": js_creds["url"],
-        "identity": js_creds["identity"],
-        "secret": js_creds["secret"]
-    }
-# os.environ["PRISMA_ACCESS_KEY"] # using an environment variable
+from prismacloud.api import pc_api
+from apu.utils import login, http_logging # importing this should trigger the login procedure
+# http_logging.http_logging()
 
-pc_api.configure(settings=settings)
-pc_api.debug = True
 
 headers = {
   'Accept': 'application/json; charset=UTF-8',

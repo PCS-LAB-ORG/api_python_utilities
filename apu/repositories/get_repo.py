@@ -9,9 +9,7 @@ import os, sys
 import requests
 
 from prismacloud.api import pc_api
-
 from apu.utils import login, http_logging # importing this should trigger the login procedure
-
 http_logging.http_logging()
 
 # https://pan.dev/prisma-cloud/api/code/get-vcs-repository-page/
