@@ -28,7 +28,6 @@ def delete(key_id):
 def add(days_till_expiration=90, key_name="My Prisma Key", key_output_file_name="access_key.json"):
     url = f"{settings['url']}/access_keys"
 
-    days_till_expiration = 90
     sats = get_expiration_stamp(days_till_expiration)
     payload = json.dumps({"expiresOn": sats, "name": key_name})
 

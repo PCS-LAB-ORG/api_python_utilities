@@ -20,6 +20,17 @@ def get_vcs_repository_page(data=''):
         pprint.pprint(repo)
     return repository_list
 
+def get_repositories(includeUnmappedProjects=False):
+    payload = ''
+    params = {
+        "includeUnmappedProjects": includeUnmappedProjects
+    }
+    url = f"{settings['url']}/code/api/v1/repositories"
+    response = requests.request("GET", url, headers=headers, params=params)
+    response.raise_for_status()
+    repository_list = json.loads(response.text)
+    return repository_list
+
 if __name__ == "__main__":
     login.login()
     get_vcs_repository_page()
