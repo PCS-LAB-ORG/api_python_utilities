@@ -30,6 +30,7 @@ jobs:
         pip install .
     - name: Lint pre-commit
       run: |
+        export PRE_COMMIT_HOME=.pre-commit/cache
         pre-commit run --all-files
     - name: Test with pytest
       run: |
