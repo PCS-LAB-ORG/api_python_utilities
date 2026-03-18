@@ -1,0 +1,34 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: requirements-txt-fixer
+      - id: pretty-format-json
+  - repo: https://github.com/psf/black
+    rev: 25.9.0
+    hooks:
+      - id: black
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.21.0
+    hooks:
+      - id: pyupgrade
+        args: [--py36-plus]
+  - repo: https://github.com/PyCQA/pylint
+    rev: v4.0.1 # Or the latest stable version
+    hooks:
+      - id: pylint
+        # args: [--rcfile=.pylintrc] # Optional: specify your Pylint configuration file
+        require_serial: true # Recommended for better inference accuracy
+  - repo: https://github.com/bridgecrewio/checkov.git
+    rev: '3.2.484' # It is recommended to change to tag or sha, such as 3.2.390
+    hooks:
+      - id: checkov # Alternatively, use checkov_container for an image based scan
+        args: [--skip-results-upload, --repo-id, pcs-lab-org/api_python_utilities, --use-enforcement-rules]
+  # - repo: https://github.com/PyCQA/flake8
+  #   rev: 7.3.0 # Use the latest version tag (check the GitHub repo for the current tag)
+  #   hooks:
+  #   - id: flake8
+  #     args: [--count --exit-zero --max-complexity=10 --max-line-length=127 --statistics]

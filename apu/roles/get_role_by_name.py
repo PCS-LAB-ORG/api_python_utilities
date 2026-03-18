@@ -10,7 +10,11 @@ from prismacloud.api import pc_api
 
 
 from prismacloud.api import pc_api
-from apu.utils import login, http_logging # importing this should trigger the login procedure
+from apu.utils import (
+    login,
+    http_logging,
+)  # importing this should trigger the login procedure
+
 # http_logging.http_logging()
 
 
@@ -20,5 +24,5 @@ response = requests.request("GET", url, headers=login.headers, data=payload)
 
 json_role = json.loads(response.text)
 for role in json_role:
-    if(role["name"] == "Reduced Developer Role"):
+    if role["name"] == "Reduced Developer Role":
         pprint.pprint(role)

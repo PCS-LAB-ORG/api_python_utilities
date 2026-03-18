@@ -15,7 +15,7 @@ from creds_lab import PRISMA_ACCESS_KEY, PRISMA_SECRET_KEY
 settings = {
     "url": "https://api2.prismacloud.io",
     "identity": PRISMA_ACCESS_KEY,
-    "secret": PRISMA_SECRET_KEY
+    "secret": PRISMA_SECRET_KEY,
 }
 # os.environ["PRISMA_ACCESS_KEY"] # using an environment variable
 
@@ -28,9 +28,9 @@ pc_api.configure(settings=settings)
 
 payload = {}
 headers = {
-  'Content-Type': 'application/json; charset=UTF-8',
-  'Accept': '*/*',
-  'x-redlock-auth': pc_api.token,
+    "Content-Type": "application/json; charset=UTF-8",
+    "Accept": "*/*",
+    "x-redlock-auth": pc_api.token,
 }
 
 response = requests.request("DELETE", url, headers=headers, data=payload)

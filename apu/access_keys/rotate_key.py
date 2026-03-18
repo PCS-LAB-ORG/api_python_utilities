@@ -58,6 +58,7 @@ inform a second execution of the script.
 
 import argparse
 import json
+
 # import pprint
 import requests
 from prismacloud.api import pc_api
@@ -77,7 +78,12 @@ parser.add_argument(
     help="The service account name who's key is being rotated. If blank the access key owner will be used if it is a service account. Access key is required.",
 )
 parser.add_argument("--expiration_in_days", required=False, default=90)
-parser.add_argument("--key_name", default="My Key", required=False, help="Override existing access key name. Default is 'My Key'")
+parser.add_argument(
+    "--key_name",
+    default="My Key",
+    required=False,
+    help="Override existing access key name. Default is 'My Key'",
+)
 cred_group = parser.add_argument_group()
 cred_group.add_argument(
     "--DOMAIN",
@@ -94,8 +100,18 @@ cred_group.add_argument(
     required=False,
     help="Will otherwise be required in local creds.py file with PRISMA_SECRET_KEY variable by command `import creds`",
 )
-parser.add_argument("--force", required=False, default=False, help="Delete and Create key without prompting.")
-parser.add_argument("--new_output_filename", required=False, default="access_key.csv", help="The new access/secret keys will be put into this new file.")
+parser.add_argument(
+    "--force",
+    required=False,
+    default=False,
+    help="Delete and Create key without prompting.",
+)
+parser.add_argument(
+    "--new_output_filename",
+    required=False,
+    default="access_key.csv",
+    help="The new access/secret keys will be put into this new file.",
+)
 args = parser.parse_args()
 key_name = args.key_name
 
@@ -121,7 +137,7 @@ if args.PRISMA_SECRET_KEY:
 # import sys, os
 # sys.path.append(os.path.abspath(f"../"))
 # A file in the same directory called creds_lab.py will be read for these vars
-# from creds import PRISMA_ACCESS_KEY, PRISMA_SECRET_KEY, DOMAIN # This is my preferred method. 
+# from creds import PRISMA_ACCESS_KEY, PRISMA_SECRET_KEY, DOMAIN # This is my preferred method.
 # if not args.PRISMA_SECRET_KEY or not args.DOMAIN or not args.PRISMA_ACCESS_KEY:
 #     try:
 #         import creds_lab
@@ -148,6 +164,7 @@ headers = {
     "x-redlock-auth": pc_api.token,
 }
 
+
 def get_expiration_stamp(days):
     # future_date_utc = datetime(2026, 1, 1, 10, 30, 0)
     # Year, Month, Day, Hour, Minute, Second
@@ -165,6 +182,7 @@ def get_expiration_stamp(days):
     sats = str(timestamp_float).replace(".", "")[:13]  # Get first 13 characters
     return sats
 
+
 # Get the key name to reuse
 url = f"{settings['url']}/access_keys/"
 response = requests.request("GET", url, headers=headers, data=payload)
@@ -174,7 +192,7 @@ access_key_list = json.loads(response.text)
 # Does the access key given exist
 exists = False
 for key in access_key_list:
-    if key['id'] == access_key:
+    if key["id"] == access_key:
         exists = True
 if not exists:
     print(f"access key {access_key} not found.")
@@ -189,7 +207,7 @@ try:
 except requests.exceptions.HTTPError as e:
     if e.response.status_code == 403:
         quit(response.text)
-    
+
 user_list = json.loads(response.text)
 
 # Map user to key. Check isServiceAccount
@@ -197,40 +215,47 @@ user_key_list = []
 found_key = {}
 for user in user_list:
     if args.service_account and args.service_account != user["username"]:
-            continue
+        continue
     for key in access_key_list:
-        # These two handle when no access key is given 
+        # These two handle when no access key is given
         if args.access_key and key["id"] != access_key:
             continue
         # pprint.pprint(key) # debug
-        # user['username'] is the service account name when it's a 
+        # user['username'] is the service account name when it's a
         # service account and user's email otherwise
         if user["username"] == key["createdBy"]:
             if user["type"] != "SERVICE_ACCOUNT":
-                quit(f"Only service accounts can be used. {args.service_account} is type {user['type']}")
+                quit(
+                    f"Only service accounts can be used. {args.service_account} is type {user['type']}"
+                )
             print(f"Matched user:key on username {user['username']}")
             user_key_list.append(key)
-            if access_key == key['id']:
+            if access_key == key["id"]:
                 # pprint.pprint(user) # debug
                 key_name = key["name"]
                 found_key = key
-                # This inner loop finds possible second key belonging to user. This is used to check if 
+                # This inner loop finds possible second key belonging to user. This is used to check if
                 # another key can be made
                 for other_key in access_key_list:
-                    if other_key["createdBy"] == user["username"] and other_key["id"] != key["id"]:
+                    if (
+                        other_key["createdBy"] == user["username"]
+                        and other_key["id"] != key["id"]
+                    ):
                         user_key_list.append(other_key)
-                        break;
-                break;
+                        break
+                break
 
 # This assumes that service account can only be changed by creator. SOC creates them
-# currently so this may not make sense. 
+# currently so this may not make sense.
 # if found_key["createdBy"] != args.service_account:
 #     quit(f"--service_account {args.service_account} is not the owner of this key")
 
 if key_name == "":
     # Handle no matching key
     if len(user_key_list) == 2:
-        quit("This service account already has 2 other access keys which is the limit. Must give a specific key to rotate.")
+        quit(
+            "This service account already has 2 other access keys which is the limit. Must give a specific key to rotate."
+        )
     res = ""
     if not args.force:
         res = input("access_key seems to be missing. Create new key?\n(y) >>> ")
@@ -263,7 +288,9 @@ if args.service_account:
     service_account_name = args.service_account
 else:
     service_account_name = found_key["createdBy"]
-payload = json.dumps({"expiresOn": sats, "name": key_name, "serviceAccountName": service_account_name})
+payload = json.dumps(
+    {"expiresOn": sats, "name": key_name, "serviceAccountName": service_account_name}
+)
 
 # Create access key
 url = f"{settings['url']}/access_keys"

@@ -12,13 +12,17 @@ import requests
 from datetime import datetime
 
 from prismacloud.api import pc_api
-from apu.utils import login, http_logging # importing this should trigger the login procedure
+from apu.utils import (
+    login,
+    http_logging,
+)  # importing this should trigger the login procedure
+
 # http_logging.http_logging()
 
 
 repo_array = []
 input_file = []
-with open("file.txt", "r") as file:
+with open("file.txt") as file:
     input_file = file.readlines()  # Print the line without adding an extra newline
 print(input_file)
 
@@ -62,8 +66,10 @@ if role is {}:
     quit("Role not found. ")
 # print(f"\n{found}")
 
-proceed = input("Proceed to add these values to role: {user_role_name}? (type Y for yes)")
-if(proceed == "Y"):
+proceed = input(
+    "Proceed to add these values to role: {user_role_name}? (type Y for yes)"
+)
+if proceed == "Y":
     quit()
 
 codeRepositories = role["codeRepositories"]
@@ -71,7 +77,7 @@ codeRepositoryIds = role["codeRepositoryIds"]
 print(f"{codeRepositories}: {codeRepositoryIds}")
 
 fun = input("'add' or 'replace' existing repos associated with role?")
-if (fun == "add"):
+if fun == "add":
     repo_array += codeRepositoryIds
 
 # make array values unique
@@ -79,24 +85,24 @@ uniq_arr = list(set(repo_array))
 repo_array = uniq_arr
 
 print("Attempting to update role...\n")
-now=datetime.now()
+now = datetime.now()
 user_role_update = {
-  # "accountGroupIds": [
-  #   "string"
-  # ],
-  # "additionalAttributes": {
-  #   "hasDefenderPermissions": True,
-  #   "onlyAllowCIAccess": True,
-  #   "onlyAllowComputeAccess": True
-  # },
-  "codeRepositoryIds": repo_array,
-#   "description": f"Today is {now}",
-#   "name": user_role_name,
-  # "resourceListIds": [
-  #   "string"
-  # ],
-  # "restrictDismissalAccess": True,
-  # "roleType": "string"
+    # "accountGroupIds": [
+    #   "string"
+    # ],
+    # "additionalAttributes": {
+    #   "hasDefenderPermissions": True,
+    #   "onlyAllowCIAccess": True,
+    #   "onlyAllowComputeAccess": True
+    # },
+    "codeRepositoryIds": repo_array,
+    #   "description": f"Today is {now}",
+    #   "name": user_role_name,
+    # "resourceListIds": [
+    #   "string"
+    # ],
+    # "restrictDismissalAccess": True,
+    # "roleType": "string"
 }
 
 input(f"Role transform:\n{user_role_update}")

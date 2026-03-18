@@ -8,10 +8,14 @@ import pprint
 import os, sys
 import requests
 
-from apu.utils import login, http_logging # importing this should trigger the login procedure
+from apu.utils import (
+    login,
+    http_logging,
+)  # importing this should trigger the login procedure
+
 
 # https://pan.dev/prisma-cloud/api/code/get-vcs-repository-page/
-def get_vcs_repository_page(data=''):
+def get_vcs_repository_page(data=""):
     url = f"{login.settings['url']}/code/api/v1/vcs-repository/repositories"
     response = requests.request("POST", url, headers=login.headers, data=data)
     response.raise_for_status()
@@ -20,16 +24,16 @@ def get_vcs_repository_page(data=''):
         pprint.pprint(repo)
     return repository_list
 
+
 def get_repositories(includeUnmappedProjects=False):
-    payload = ''
-    params = {
-        "includeUnmappedProjects": includeUnmappedProjects
-    }
+    payload = ""
+    params = {"includeUnmappedProjects": includeUnmappedProjects}
     url = f"{settings['url']}/code/api/v1/repositories"
     response = requests.request("GET", url, headers=headers, params=params)
     response.raise_for_status()
     repository_list = json.loads(response.text)
     return repository_list
+
 
 if __name__ == "__main__":
     login.login()

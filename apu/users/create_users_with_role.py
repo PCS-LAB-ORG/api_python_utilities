@@ -9,25 +9,33 @@ import sys, os, json, csv
 
 
 from prismacloud.api import pc_api
-from apu.utils import login, http_logging # importing this should trigger the login procedure
+from apu.utils import (
+    login,
+    http_logging,
+)  # importing this should trigger the login procedure
+
 # http_logging.http_logging()
 
-# All required except 'activeRole' and 'accessKeysAllowed' (access keys allowed by default) 
+
+# All required except 'activeRole' and 'accessKeysAllowed' (access keys allowed by default)
 def create_user(user):
-    payload = json.dumps({
-        "accessKeysAllowed": True,
-        "activeRole": {},
-        "defaultRoleId": user["defaultRoleId"],
-        "email": user["email"],
-        "firstName": user["firstName"],
-        "lastName": user["lastName"],
-        "roleIds": user["roleIds"].replace(" ", ", "),
-        "timeZone": user["timeZone"]
-    })
+    payload = json.dumps(
+        {
+            "accessKeysAllowed": True,
+            "activeRole": {},
+            "defaultRoleId": user["defaultRoleId"],
+            "email": user["email"],
+            "firstName": user["firstName"],
+            "lastName": user["lastName"],
+            "roleIds": user["roleIds"].replace(" ", ", "),
+            "timeZone": user["timeZone"],
+        }
+    )
     res = pc_api.user_create(payload)
     print(f"Create User ({user["email"]}) response code: {res}")
 
-with open("user_list.csv", "r") as user_list:
+
+with open("user_list.csv") as user_list:
     csv_user_list = csv.DictReader(user_list)
     for user in csv_user_list:
         create_user(user)

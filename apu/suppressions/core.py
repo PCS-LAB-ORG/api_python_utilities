@@ -9,13 +9,17 @@ import requests
 import json
 from apu.utils import login, http_logging # importing this should trigger the login procedure
 
-login.login(redlock=False) # Authorization header
+# login.login(redlock=False) # Authorization header
 
-url = f"{settings['url']}/code/api/v1/suppressions"
+def get()
+    url = f"{settings['url']}/code/api/v1/suppressions"
 
-response = requests.request("GET", url, headers=headers)
-js_res = json.loads(response.text)
-# pprint.pprint(js_res)
+    response = requests.request("GET", url, headers=headers)
+    js_res = json.loads(response.text)
+    # pprint.pprint(js_res)
+    return js_res
+
+suppression_list = get()
 
 resources = []
 tags = []

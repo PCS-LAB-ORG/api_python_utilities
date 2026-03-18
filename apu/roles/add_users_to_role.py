@@ -10,10 +10,14 @@ from datetime import datetime
 
 
 from prismacloud.api import pc_api
-from apu.utils import login, http_logging # importing this should trigger the login procedure
+from apu.utils import (
+    login,
+    http_logging,
+)  # importing this should trigger the login procedure
+
 # http_logging.http_logging()
 
-with open("file.txt", "r") as file:
+with open("file.txt") as file:
     user_list = file.readlines()  # Print the line without adding an extra newline
 
 # user_name = "jumiles@paloaltonetworks.com"

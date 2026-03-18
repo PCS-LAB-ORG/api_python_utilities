@@ -1,4 +1,3 @@
-
 def http_logging():
     #############################################################################################
     # This section would turn on extra logging for http requests
@@ -22,4 +21,6 @@ def http_logging():
     requests_log.setLevel(logging.DEBUG)
     requests_log.propagate = True
     ####################################################################################
+
+
 # http_logging()

@@ -10,11 +10,15 @@ import requests
 import xml.etree.ElementTree as etree
 
 from prismacloud.api import pc_api
-from apu.utils import login, http_logging # importing this should trigger the login procedure
+from apu.utils import (
+    login,
+    http_logging,
+)  # importing this should trigger the login procedure
+
 # http_logging.http_logging()
 
 
-payload = ''
+payload = ""
 
 format = "cyclonedx"
 material = "all"
@@ -28,7 +32,11 @@ js_res = json.loads(response.text)
 for format in js_res["bomResponse"]:
     res = requests.request("GET", format["reportLink"], verify=False)
     res.raise_for_status()
-    filename = res.headers["Content-Disposition"].removeprefix("attachment; filename = ").replace("\"", "")
+    filename = (
+        res.headers["Content-Disposition"]
+        .removeprefix("attachment; filename = ")
+        .replace('"', "")
+    )
     print(f"{format['format']} {filename}")
     with open(filename, "w") as file:
         # The contexts can be written directly but, this will format and indent XML

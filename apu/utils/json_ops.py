@@ -1,18 +1,17 @@
-
 def flatten_json(nested_json):
     """
     Flattens a nested JSON object into a single-level dictionary.
     """
     out = {}
 
-    def flatten(x, name=''):
+    def flatten(x, name=""):
         if type(x) is dict:
             for a in x:
-                flatten(x[a], name + a + '.')
+                flatten(x[a], name + a + ".")
         elif type(x) is list:
             i = 0
             for a in x:
-                flatten(a, name + str(i) + '.')
+                flatten(a, name + str(i) + ".")
                 i += 1
         else:
             out[name[:-1]] = x

@@ -8,7 +8,7 @@ import csv
 import json
 import requests
 from datetime import datetime as dt
-from apu.utils import login, files # importing this should trigger the login procedure
+from apu.utils import login, files  # importing this should trigger the login procedure
 
 repository_list = get_repo.get_repositories(includeUnmappedProjects=True)
 

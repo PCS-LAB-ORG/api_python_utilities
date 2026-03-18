@@ -1,9 +1,9 @@
 #!/bin/bash python
 
-'''
+"""
 Script to collect users that have not logged in for 180 days (set days_since_login).
 This will output a list of those users with their last login time or Never.
-'''
+"""
 days_since_login = 180
 
 import requests
@@ -13,7 +13,11 @@ from datetime import datetime, timedelta
 
 
 from prismacloud.api import pc_api
-from apu.utils import login, http_logging # importing this should trigger the login procedure
+from apu.utils import (
+    login,
+    http_logging,
+)  # importing this should trigger the login procedure
+
 # http_logging.http_logging()
 
 
@@ -26,6 +30,7 @@ user_list = json.loads(response.text)
 
 expiring_user_list = []
 import datetime
+
 for user in user_list:
     if user["type"] == "SERVICE_ACCOUNT":
         continue
