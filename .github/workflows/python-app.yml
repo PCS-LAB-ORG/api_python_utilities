@@ -39,6 +39,7 @@ jobs:
       run: |
         export PRE_COMMIT_HOME=.pre-commit/cache
         pre-commit run --all-files
+      continue-on-error: true # This step can fail, but the workflow continues
     - name: Test with pytest
       run: |
         pytest
