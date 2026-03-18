@@ -32,6 +32,9 @@ jobs:
       uses: actions/cache@v4
       with:
         path: .pre-commit/cache
+        key: ${{ runner.os }}-pre-commit
+        restore-keys: |
+          ${{ runner.os }}-pre-commit
     - name: Lint pre-commit
       run: |
         export PRE_COMMIT_HOME=.pre-commit/cache
