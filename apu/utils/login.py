@@ -36,7 +36,6 @@ def common_settings_file(credential_name="credentials"):
     return settings
 
 
-
 def login(debug=False, redlock=None, credential_name="credentials", lib="pc_api"):
     if lib == "pc_api":
         return login_pc_api(debug=False, redlock=None, credential_name="credentials")
@@ -72,6 +71,7 @@ def login_pcpi(logger=None, credential_name="credentials"):
     cspm_session = session_man.create_cspm_session()
     return cspm_session
 
+
 def get_headers(redlock=True, token=None):
 
     global headers
@@ -87,6 +87,7 @@ def get_headers(redlock=True, token=None):
             "Accept": "*/*",
             "Authorization": pc_api.token,
         }
+
 
 def refresh_token(redlock=True):
     cspm_session = session_man.create_cspm_session()
