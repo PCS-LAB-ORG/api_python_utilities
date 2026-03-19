@@ -59,6 +59,61 @@ def create(category):
     #   --data-raw $'{"comment":$comment,"expirationTime":1756278000000,"suppressionType":"Resources","resources":{"accountId":"jumiles-pa/test-cas-app","id":"$policyId::jumiles-pa/test-cas-app::/README.md:3ac743df70f6d3b34bceee4753eeeedaa4650911"},"origin":"Platform"}'
 
 
+#   create_suppression(comment, policy_id, account_id, derived_file_path_with_commit, code_lines, expiration)
+def create_suppression(comment, policyId, account_id, file_path, code_lines, expiration=-1, uuid="", category=""):
+    # https://pan.dev/prisma-cloud/api/code/create-suppression/
+
+    '''
+    Suppression Types:
+    SecretsPolicy
+    PackageLicense
+    LicenseType
+    CvesAccounts
+    OrganizationAndPolicy
+    Tags
+    Accounts
+    Policy
+    Cves
+    '''
+
+    # resource uuid and policy uuid are matching and represent the finding id needed for weaknesses
+    if category is "Weaknesses":
+        
+        url = f"{login.settings['url']}/bridgecrew/api/v1/suppressions"
+        payload_js = {
+            "policyIds": [policyId],
+            "justificationComment": comment,
+            "ruleType": "finding",
+            "type": "PERIODIC",
+            "findingIds": [uuid]
+        }
+        # I need to check how it does this...
+        if not expiration == -1:
+            # Valentines Day 2026 at 12:00am PST
+            # {"comment":"asdf","expirationTime":1771056000000,"suppressionType":"Resources","resources":{"accountId":"jumiles/webgoat","id":"BC_GIT_6::jumiles/webgoat::/src/test/java/org/owasp/webgoat/lessons/missingac/MissingFunctionACUsersTest.java:91a33f0e448feb0845cba10cb0d9ac38cf19294d"},"origin":"Platform"}
+            payload_js["expiration"] = expiration
+        
+    if category is "Secrets":
+        url = f"{login.settings['url']}/bridgecrew/api/v1/suppressions/{policyId}"
+        payload_js = {
+            "comment": f"{today} {policyId}::{account_id}::{file_path} {code_lines}\nComment: {comment}",
+            "suppressionType": "Resources",
+            "resources": {
+                "accountId": account_id,
+                "id": f"{policyId}::{account_id}::{file_path}"
+            },
+            "origin": "Platform"
+        }
+        if not expiration == -1:
+            # Valentines Day 2026 at 12:00am PST
+            # {"comment":"asdf","expirationTime":1771056000000,"suppressionType":"Resources","resources":{"accountId":"jumiles/webgoat","id":"BC_GIT_6::jumiles/webgoat::/src/test/java/org/owasp/webgoat/lessons/missingac/MissingFunctionACUsersTest.java:91a33f0e448feb0845cba10cb0d9ac38cf19294d"},"origin":"Platform"}
+            payload_js["expiration"] = expiration
+    payload = json.dumps(payload_js)
+
+    response = requests.request("POST", url, headers=login.headers, data=payload)
+    response.raise_for_status()
+    print(f"Suppressed: {response.text} {account_id} {policyId}::{account_id}::{file_path} {comment}")
+
 def delete(policy, suppression):
     suppression_id = ""  # UUID Format
     policy_id = ""  # like BC_GIT_2
