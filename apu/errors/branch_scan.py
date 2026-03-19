@@ -24,7 +24,7 @@ formatted_starttime = dt.now().strftime('%Y-%m-%d_%H-%M-%S')
 script_path = Path(__file__).resolve()
 
 # Get the directory containing the script
-script_dir = f"{script_path.parent}/logs_{formatted_starttime}"  # Default output location
+script_dir = f"{script_path.parent}/logs/logs_{formatted_starttime}"  # Default output location
 
 if not os.path.exists(script_dir):
     os.makedirs(script_dir)
