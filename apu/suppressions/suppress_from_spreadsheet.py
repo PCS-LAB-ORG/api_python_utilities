@@ -4,10 +4,7 @@ import csv
 import pandas as pd
 from pathlib import Path
 import requests
-
-
 import pprint
-import requests
 import json
 
 from apu.utils import login, logger
