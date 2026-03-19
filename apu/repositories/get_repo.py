@@ -25,14 +25,20 @@ def get_vcs_repository_page(data=""):
     return repository_list
 
 
-def get_repositories(includeUnmappedProjects=False):
+def get_repositories(includeUnmappedProjects=False, repo_search_list=[]):
     payload = ""
     params = {"includeUnmappedProjects": includeUnmappedProjects}
-    url = f"{settings['url']}/code/api/v1/repositories"
-    response = requests.request("GET", url, headers=headers, params=params)
+    url = f"{login.settings['url']}/code/api/v1/repositories"
+    response = requests.request("GET", url, headers=login.headers, params=params)
     response.raise_for_status()
     repository_list = json.loads(response.text)
-    return repository_list
+    
+    repository_match_list_non_onboarded = []
+    source_id_list = [repo['Source ID'] for repo in repo_search_list]
+    for repo in repository_list:
+        if len(source_id_list) == 0 or f"{repo['owner']}/{repo['repository']}" in source_id_list:
+            repository_match_list_non_onboarded.append(repo)
+    return repository_match_list_non_onboarded
 
 
 if __name__ == "__main__":
