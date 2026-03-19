@@ -5,6 +5,7 @@ def test():
     # Usage
 
     from pathlib import Path
+
     script_dir = Path(__file__).parent
     pickle_file = f"{script_dir}/secure.pkl"
 
@@ -14,6 +15,6 @@ def test():
     try:
         loaded = pickle.verify_and_unpickle(pickle_file)
         print("Data loaded securely:", loaded)
-        assert loaded['id'] == 42
+        assert loaded["id"] == 42
     except ValueError as e:
         print(e)

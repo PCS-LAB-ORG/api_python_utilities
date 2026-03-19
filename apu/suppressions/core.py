@@ -7,9 +7,13 @@ from pathlib import Path
 import pprint
 import requests
 import json
-from apu.utils import login, http_logging # importing this should trigger the login procedure
+from apu.utils import (
+    login,
+    http_logging,
+)  # importing this should trigger the login procedure
 
-login.login(redlock=False) # Authorization header
+login.login(redlock=False)  # Authorization header
+
 
 def get():
     url = f"{login.settings['url']}/code/api/v1/suppressions"
@@ -19,24 +23,25 @@ def get():
     # pprint.pprint(js_res)
     return js_res
 
+
 def create(category):
     if category == "Secrets":
-        comment = "it\'s elementary"
-        policy_id = "BC_GIT_9" #"902599344975759360_SECRETS_1745427256645"
+        comment = "it's elementary"
+        policy_id = "BC_GIT_9"  # "902599344975759360_SECRETS_1745427256645"
         account_id = "jumiles/webgoat"
         file_path = "/src/test/java/org/owasp/webgoat/webwolf/jwt/JWTTokenTest.java"
         commit_sha = "f4dac9065a6c93d8d93caf8a9567d9cb83688ba0"
         # expiration_time = 1756278000000
 
         payload = {
-            "comment":comment,
+            "comment": comment,
             # "expirationTime":expiration_time,
-            "suppressionType":"Resources",
-            "resources":{
-                "accountId":account_id,
-                "id":f"{policy_id}::{account_id}::{file_path}:{commit_sha}"
+            "suppressionType": "Resources",
+            "resources": {
+                "accountId": account_id,
+                "id": f"{policy_id}::{account_id}::{file_path}:{commit_sha}",
             },
-            "origin":"Platform"
+            "origin": "Platform",
         }
 
         url = f"{login.settings['url']}/bridgecrew/api/v1/suppressions/{policy_id}"
@@ -53,14 +58,16 @@ def create(category):
     #   -H 'Content-Type: application/json' \
     #   --data-raw $'{"comment":$comment,"expirationTime":1756278000000,"suppressionType":"Resources","resources":{"accountId":"jumiles-pa/test-cas-app","id":"$policyId::jumiles-pa/test-cas-app::/README.md:3ac743df70f6d3b34bceee4753eeeedaa4650911"},"origin":"Platform"}'
 
+
 def delete(policy, suppression):
-    suppression_id = "" # UUID Format
-    policy_id = "" # like BC_GIT_2
+    suppression_id = ""  # UUID Format
+    policy_id = ""  # like BC_GIT_2
 
     url = f"{login.settings['url']}/api/v1/suppressions/{policy_id}/justifications/{suppression_id}"
     response = requests.request("DELETE", url, headers=login.headers)
     js_res = json.loads(response.text)
     return js_res
+
 
 def output_by_category(suppression_list):
     resources = []
@@ -112,6 +119,7 @@ def output_by_category(suppression_list):
         json.dump(license, license_file, indent=4)
     with open(f"{cwd}/output/accounts.json", "w") as accounts_file:
         json.dump(accounts, accounts_file, indent=4)
+
 
 suppression_list = get()
 output_by_category(suppression_list=suppression_list)

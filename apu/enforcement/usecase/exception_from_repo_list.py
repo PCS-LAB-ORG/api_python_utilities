@@ -9,9 +9,10 @@ import csv
 import argparse
 from prismacloud.api import pc_api
 
-parser = argparse.ArgumentParser(description='''
+parser = argparse.ArgumentParser(
+    description=r"""
 Description:
-This script is meant to do two things. 
+This script is meant to do two things.
 First, it will query a list of repositories from Prisma and compare to a local list of repos that may exist and writes it to a local file.
 Second, it prompts to create/update an enforcement exception for these repos with the enforcement rule definition.
 
@@ -21,27 +22,50 @@ Python libraries required: requests, prismacloud-api
 
 Run the script
 python .\exception_from_repo_list.py <args>
-''',
-epilog='''
+""",
+    epilog="""
 Core Use Cases
 1. Get list of archived repos as a local csv
 2. Create new exceptions with list of archived repos
 3. Create new exception with edited local list of repos
 4. Update existing exception with local list of repos
 5. Update existing exception with a repo that already exists in a different exception
-6. Show that argparse can be used instead of hardcoding values. 
+6. Show that argparse can be used instead of hardcoding values.
 7. Show help statement
 8. Show README.md
-''', formatter_class=argparse.RawDescriptionHelpFormatter)
-parser.add_argument("--file", required=True, help="Relative file path csv formatted set of repositories containing at least 'id' and 'fullName'. The file created will have this format.")
-parser.add_argument("--exception_name", required=False, help="The name of the exception that you are creating or updating. Without this it will ask to write repos to a local file --file")
-parser.add_argument("--force", action='store_true', default=False, help="Automatically accept all prompts. (equivalent to passing true, yes, proceed, etc.)")
-parser.add_argument("--verbose", action='store_true', default=False, help="Some extra logging for http calls and debugging.")
+""",
+    formatter_class=argparse.RawDescriptionHelpFormatter,
+)
+parser.add_argument(
+    "--file",
+    required=True,
+    help="Relative file path csv formatted set of repositories containing at least 'id' and 'fullName'. The file created will have this format.",
+)
+parser.add_argument(
+    "--exception_name",
+    required=False,
+    help="The name of the exception that you are creating or updating. Without this it will ask to write repos to a local file --file",
+)
+parser.add_argument(
+    "--force",
+    action="store_true",
+    default=False,
+    help="Automatically accept all prompts. (equivalent to passing true, yes, proceed, etc.)",
+)
+parser.add_argument(
+    "--verbose",
+    action="store_true",
+    default=False,
+    help="Some extra logging for http calls and debugging.",
+)
 
-# This doesn't quite work yet. 
+# This doesn't quite work yet.
 # parser.add_argument("--repo_filter", required=False, default={"filters": {"archived": ["true"]}}, help="This is applied to select the repos. Empty string should select for all repos.")
 
-parser.add_argument("--exception_definition_file", help="Unimplemented. Currently the codeCategories flags are hardcoded as variable 'exception_definition'.")
+parser.add_argument(
+    "--exception_definition_file",
+    help="Unimplemented. Currently the codeCategories flags are hardcoded as variable 'exception_definition'.",
+)
 parser.add_argument(
     "--PRISMA_DOMAIN",
     default=os.environ.get("PRISMA_DOMAIN"),
@@ -67,20 +91,20 @@ if len(unknown) != 0:
 if not (args.PRISMA_DOMAIN or args.PRISMA_ACCESS_KEY or args.PRISMA_SECRET_KEY):
     quit("Unable to authenticate without domain, access, and secret keys")
 
-'''
+"""
 How to edit this exception definition.
 Code Categories: These are related to enabled features in Prisma.
 *Threshold values: enumeration of OFF, INFO, LOW, MEDIUM, HIGH, CRITICAL
-Some category threshold levels are not supported. Please see documentation 
+Some category threshold levels are not supported. Please see documentation
 or review what is allowed in your tenant.
 https://docs.prismacloud.io/en/enterprise-edition/content-collections/application-security/risk-management/monitor-and-manage-code-build/enforcement
-'''
+"""
 exception_definition = {
     "codeCategories": {
         "BUILD_INTEGRITY": {
             "softFailThreshold": "OFF",
             "hardFailThreshold": "OFF",
-            "commentsBotThreshold": "OFF"
+            "commentsBotThreshold": "OFF",
         },
         "IAC": {
             "commentsBotThreshold": "OFF",
@@ -118,8 +142,9 @@ exception_definition = {
 settings = {
     "url": args.PRISMA_DOMAIN,
     "identity": args.PRISMA_ACCESS_KEY,
-    "secret": args.PRISMA_SECRET_KEY
+    "secret": args.PRISMA_SECRET_KEY,
 }
+
 
 def http_logging():
     #############################################################################################
@@ -144,6 +169,8 @@ def http_logging():
     requests_log.setLevel(logging.DEBUG)
     requests_log.propagate = True
     ####################################################################################
+
+
 # http_logging()
 
 pc_api.configure(settings=settings)
@@ -156,20 +183,21 @@ headers = {
     "x-redlock-auth": pc_api.token,
 }
 
+
 def flatten_json(nested_json):
     """
     Flattens a nested JSON object into a single-level dictionary.
     """
     out = {}
 
-    def flatten(x, name=''):
+    def flatten(x, name=""):
         if type(x) is dict:
             for a in x:
-                flatten(x[a], name + a + '.')
+                flatten(x[a], name + a + ".")
         elif type(x) is list:
             i = 0
             for a in x:
-                flatten(a, name + str(i) + '.')
+                flatten(a, name + str(i) + ".")
                 i += 1
         else:
             out[name[:-1]] = x
@@ -180,7 +208,10 @@ def flatten_json(nested_json):
 
 # https://pan.dev/prisma-cloud/api/code/get-vcs-repository-page/
 def get_vcs_repository_page(local_file):
-    repo_filter = {"filters": {"archived": ["true"]}, "pageConfig": {"page": 0, "pageSize": 1000}}
+    repo_filter = {
+        "filters": {"archived": ["true"]},
+        "pageConfig": {"page": 0, "pageSize": 1000},
+    }
     payload = json.dumps(repo_filter)
     print("post get_vcs_repository_page")
     url = f"{settings['url']}/code/api/v1/vcs-repository/repositories"
@@ -199,7 +230,7 @@ def get_vcs_repository_page(local_file):
         flat_repo = flatten_json(repo)
         key_list.update(flat_repo.keys())
         repo_list.append(flat_repo)
-    
+
     key_list = list(key_list)
     key_list.sort()
     # These are the user friendly keys I want at the beginning
@@ -217,20 +248,26 @@ def get_vcs_repository_page(local_file):
         writer.writeheader()
         writer.writerows(repo_list)
     print("The newly written file is the same as the remote state.")
-    print(f"Local repo list file exists as file {local_filename} and will be used to compare current exception rule state.")
+    print(
+        f"Local repo list file exists as file {local_filename} and will be used to compare current exception rule state."
+    )
     return repo_list, key_list
-        
+
+
 def read_local_repo_list():
     repositories = []
-    with open(local_filename, "r", newline='') as repo_list:
+    with open(local_filename, newline="") as repo_list:
         csv_list = csv.DictReader(repo_list)
         for repo in csv_list:
             repositories.append(repo)
         return repositories
+
+
 # read_local_repo_list()
 
+
 def compare_local(local_file):
-    
+
     remote, k = get_vcs_repository_page(local_file)
     remote_url_set = set()
     print("remote repos")
@@ -259,16 +296,19 @@ def compare_local(local_file):
     if len(local_only) > 0:
         print("Local repo list contains archived repos not in remote list")
     return False
+
+
 # print(compare_local())
 
 
 def get_enforcement_rules():
     url = f"{settings['url']}/code/api/v1/enforcement-rules"
-    payload = ''
+    payload = ""
     response = requests.request("GET", url, headers=headers, data=payload)
     response.raise_for_status()
     # rule_id_list = []
     return json.loads(response.text)
+
 
 # https://pan.dev/prisma-cloud/api/code/add-rule/
 def add_rule(archived_repo_id_name, matching_name_id):
@@ -285,7 +325,7 @@ def add_rule(archived_repo_id_name, matching_name_id):
     headers = {
         "Content-Type": "application/json; charset=UTF-8",
         "Accept": "*/*",
-        'Authorization': pc_api.token
+        "Authorization": pc_api.token,
     }
     # https://pan.dev/prisma-cloud/api/code/edit-rule/
     if matching_name_id != "":
@@ -294,7 +334,7 @@ def add_rule(archived_repo_id_name, matching_name_id):
         headers = {
             "Content-Type": "application/json; charset=UTF-8",
             "Accept": "*/*",
-            "x-redlock-auth": pc_api.token, # Can I use the Authorization header for both calls? 
+            "x-redlock-auth": pc_api.token,  # Can I use the Authorization header for both calls?
         }
     payload = json.dumps(exception_definition)
     if args.verbose:
@@ -304,19 +344,22 @@ def add_rule(archived_repo_id_name, matching_name_id):
     response.raise_for_status()
     print(f"Created/Updated Exception\n{response.text}")
 
+
 if args.exception_name:
-    exception_name = args.exception_name # "Archived Repo Exception4"
+    exception_name = args.exception_name  # "Archived Repo Exception4"
 if args.file:
-    local_filename = args.file # "excluded_repos2.csv"
+    local_filename = args.file  # "excluded_repos2.csv"
 
 if compare_local(local_filename):
-    print("There are no differences between the local file and the repo list in Prisma.")
+    print(
+        "There are no differences between the local file and the repo list in Prisma."
+    )
     # This check is just to pull the repo list and not the list associated with an exception.
     # Thus continue
 
-'''
-This is the point at which we go from collecting a repo list to applying an exception to it. 
-'''
+"""
+This is the point at which we go from collecting a repo list to applying an exception to it.
+"""
 
 if not args.exception_name:
     quit("No exception name given so this can only write the record of repositories.")
@@ -331,7 +374,7 @@ else:
 # if either case passes
 if c == "y":
     remote_enforcement_rule_list = get_enforcement_rules()
-    matching_name_id = "" # Blank implies the rule does not exist
+    matching_name_id = ""  # Blank implies the rule does not exist
     matching_rule = {}
     local_repo_list = read_local_repo_list()
     repos_in_local_list = set()
@@ -346,19 +389,23 @@ if c == "y":
             matching_name_id = remote_rule["id"]
             matching_rule = remote_rule
         else:
-            # This isn't the prettiest code but, I prefer easy to follow logic 
+            # This isn't the prettiest code but, I prefer easy to follow logic
             # This if statement makes a single list of items that exist in both lists
-            # then checks if any are found. When the API call is made there is an ambiguous 
-            # error code if you try to create or update an exception with a repo that 
-            # another exception already has. 
+            # then checks if any are found. When the API call is made there is an ambiguous
+            # error code if you try to create or update an exception with a repo that
+            # another exception already has.
             for repo in remote_rule["repositories"]:
                 rule_repo_list.add(repo["accountName"])
     intersection_list = list(rule_repo_list.intersection(repos_in_local_list))
     if len(intersection_list) > 0:
-        quit(f"Repos being added to rule already belong to an exception that exists. This will cause an API error code: \nRule: {matching_rule}\nIntersecting Repos: {intersection_list}")
-        # In the future consider asking to create a rule that only include those not already in another rule or removing those 
+        quit(
+            f"Repos being added to rule already belong to an exception that exists. This will cause an API error code: \nRule: {matching_rule}\nIntersecting Repos: {intersection_list}"
+        )
+        # In the future consider asking to create a rule that only include those not already in another rule or removing those
 
     repo_id_and_name_list = []
     for repo in local_repo_list:
-        repo_id_and_name_list.append({"accountId": repo["id"], "accountName": repo["fullName"]})
+        repo_id_and_name_list.append(
+            {"accountId": repo["id"], "accountName": repo["fullName"]}
+        )
     add_rule(repo_id_and_name_list, matching_name_id)

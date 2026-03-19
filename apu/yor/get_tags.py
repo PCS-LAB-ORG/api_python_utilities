@@ -9,11 +9,16 @@ import pprint
 import requests
 
 # from prismacloud.api import pc_api
-from apu.utils import login, http_logging # importing this should trigger the login procedure
+from apu.utils import (
+    login,
+    http_logging,
+)  # importing this should trigger the login procedure
+
 # http_logging.http_logging()
 
+
 def get_tags():
-    payload = ''
+    payload = ""
     url = f"{login.settings['url']}/code/api/v1/tag-rules"
     response = requests.request("GET", url, headers=login.headers, data=payload)
     response.raise_for_status()
