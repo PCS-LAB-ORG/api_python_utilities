@@ -25,9 +25,12 @@ dependencies = [
     "http_logging",
     "pandas",
     "requests",
+    "grequests",
     "rx",
     "prismacloud-api",
-    "update_checker"
+    "update_checker",
+    "pcpi",
+    "urllib3",
 ]
 
 [project.urls]
