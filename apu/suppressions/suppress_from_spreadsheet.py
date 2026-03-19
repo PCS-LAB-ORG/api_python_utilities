@@ -5,8 +5,6 @@ import pandas as pd
 from pathlib import Path
 import requests
 
-import datetime
-today = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
 
 import pprint
 import requests
