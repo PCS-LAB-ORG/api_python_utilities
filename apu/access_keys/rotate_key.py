@@ -133,20 +133,6 @@ if args.PRISMA_ACCESS_KEY:
 if args.PRISMA_SECRET_KEY:
     PRISMA_SECRET_KEY = args.PRISMA_SECRET_KEY
 
-# Settings for Prisma Cloud Enterprise Edition
-# import sys, os
-# sys.path.append(os.path.abspath(f"../"))
-# A file in the same directory called creds_lab.py will be read for these vars
-# from creds import PRISMA_ACCESS_KEY, PRISMA_SECRET_KEY, DOMAIN # This is my preferred method.
-# if not args.PRISMA_SECRET_KEY or not args.DOMAIN or not args.PRISMA_ACCESS_KEY:
-#     try:
-#         import creds_lab
-#         DOMAIN =            creds_lab.DOMAIN
-#         PRISMA_ACCESS_KEY = creds_lab.PRISMA_ACCESS_KEY
-#         PRISMA_SECRET_KEY = creds_lab.PRISMA_SECRET_KEY
-#     except ModuleNotFoundError as e:
-#         quit(e.msg)
-
 settings = {"url": DOMAIN, "identity": PRISMA_ACCESS_KEY, "secret": PRISMA_SECRET_KEY}
 
 if access_key == args.PRISMA_ACCESS_KEY or settings["identity"] == access_key:
@@ -183,11 +169,7 @@ def get_expiration_stamp(days):
     return sats
 
 
-# Get the key name to reuse
-url = f"{settings['url']}/access_keys/"
-response = requests.request("GET", url, headers=headers, data=payload)
-response.raise_for_status()
-access_key_list = json.loads(response.text)
+access_key_list = keys.get()
 
 # Does the access key given exist
 exists = False
@@ -199,16 +181,7 @@ if not exists:
     if not args.service_account:
         quit(f"--service_account is required if access key cannot be looked up.")
 
-# Get user list
-url = f"{settings['url']}/v3/user"
-response = requests.request("GET", url, headers=headers, data=payload)
-try:
-    response.raise_for_status()
-except requests.exceptions.HTTPError as e:
-    if e.response.status_code == 403:
-        quit(response.text)
-
-user_list = json.loads(response.text)
+user_list = users.get()
 
 # Map user to key. Check isServiceAccount
 user_key_list = []

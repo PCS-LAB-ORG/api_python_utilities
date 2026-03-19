@@ -9,10 +9,12 @@ import requests
 
 from apu.utils import login, http_logging # importing this should trigger the login procedure
 
-def get()
+def get():
     url = f"{login.settings['url']}/access_keys"
     payload = {}
     response = requests.request("GET", url, headers=login.headers, data=payload)
+    response.raise_for_status()
+    return json.loads(response.text)
 
 def delete(key_id):
     # Read access key id from script arguments
