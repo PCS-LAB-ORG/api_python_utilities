@@ -14,6 +14,31 @@ from prismacloud.api import pc_api
 
 settings = {}
 
+def user_pass(debug=False, redlock=None, url="https://api2.prismacloud.io/", identity="", secret=""):
+    # Settings for Prisma Cloud Enterprise Edition
+
+    settings = {
+        "url": url,
+        "identity": identity, # access key
+        "secret": secret
+    }
+
+    pc_api.configure(settings=settings)
+    pc_api.debug = debug
+
+    payload = ""
+
+    global headers
+    headers = get_headers(redlock)
+
+    # print('Prisma Cloud API Current User:')
+    # print(pc_api.current_user())
+    # print('Prisma Cloud Compute API Intelligence:')
+    # print(pc_api.statuses_intelligence())
+
+    # print('Prisma Cloud API Object:')
+    # print(pc_api)
+    return pc_api
 
 def get_settings_file_name(credential_name="credentials"):
     return f"{Path.home()}/.prismacloud/{credential_name}.json"
