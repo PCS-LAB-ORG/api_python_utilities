@@ -15,20 +15,20 @@ def get():
 
     user_list = json.loads(response.text)
 
-def create(user):
+def create(user, accessKeysAllowed=True, activeRole={}, defaultRoleId=None, email=None, firstName=None, lastName=None, roleIds=None, timeZone=None):
     ''' https://pan.dev/prisma-cloud/api/cspm/add-user-v-2/ '''
     # Expected format. See API def in pan.dev
-    # TODO idk how I want to allow for customs and overrides so for now...
-    # user = {
-    #         "accessKeysAllowed": True,
-    #         "activeRole": {},
-    #         "defaultRoleId": user["defaultRoleId"],
-    #         "email": user["email"],
-    #         "firstName": user["firstName"],
-    #         "lastName": user["lastName"],
-    #         "roleIds": user["roleIds"].replace(" ", ", "),
-    #         "timeZone": user["timeZone"],
-    #     }
+    user_attr = {
+            "accessKeysAllowed": bool(accessKeysAllowed),
+            "activeRole": activeRole,
+            "defaultRoleId": defaultRoleId,
+            "email": email,
+            "firstName": firstName,
+            "lastName": lastName,
+            "roleIds": roleIds.replace(" ", ", "),
+            "timeZone": timeZone,
+        }
+    user.update(user_attr)
     payload = json.dumps(user)
     res = pc_api.user_create(payload)
     print(f"Create User ({user["email"]}) response code: {res}")
