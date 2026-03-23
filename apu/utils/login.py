@@ -13,6 +13,8 @@ from pcpi import session_loader
 from prismacloud.api import pc_api
 
 settings = {}
+cspm_session = {}
+headers = {}
 
 def user_pass(debug=False, redlock=None, url="https://api2.prismacloud.io/", identity="", secret=""):
     # Settings for Prisma Cloud Enterprise Edition
@@ -29,7 +31,7 @@ def user_pass(debug=False, redlock=None, url="https://api2.prismacloud.io/", ide
     payload = ""
 
     global headers
-    headers = get_headers(redlock)
+    headers = get_headers(redlock, pc_api.token)
 
     # print('Prisma Cloud API Current User:')
     # print(pc_api.current_user())
@@ -65,7 +67,7 @@ def login(debug=False, redlock=None, credential_name="credentials", lib="pc_api"
     if lib == "pc_api":
         return login_pc_api(debug=False, redlock=None, credential_name="credentials")
     elif lib == "pcpi":
-        return login_pc_api(debug=False, redlock=None, credential_name="credentials")
+        return login_pcpi(redlock=None, credential_name="credentials")
     else:
         raise ("Unknown login library")
 
@@ -78,22 +80,27 @@ def login_pc_api(debug=False, redlock=None, credential_name="credentials"):
     payload = ""
 
     global headers
-    headers = get_headers(redlock)
+    headers = get_headers(redlock, pc_api.token)
 
     return pc_api
 
 
-def login_pcpi(logger=None, credential_name="credentials"):
-    file_path = get_settings_file_name(credential_name=credential_name)
+def login_pcpi(redlock=None, logger=None, credential_name="credentials"):
+    settings = get_settings_file_name(credential_name=credential_name)
     # https://github.com/PaloAltoNetworks/pc-python-integration
     if not logger:
-        session_managers = session_loader.load_config(file_path=file_path)
+        session_managers = session_loader.load_config(file_path=settings)
     else:
         session_managers = session_loader.load_config(
-            file_path=file_path, logger=logger
+            file_path=settings, logger=logger
         )
     session_man = session_managers[0]
+    global cspm_session
     cspm_session = session_man.create_cspm_session()
+
+    global headers
+    headers = get_headers(redlock=redlock, token=cspm_session.token)
+
     return cspm_session
 
 
@@ -104,13 +111,13 @@ def get_headers(redlock=True, token=None):
         return {
             "Content-Type": "application/json; charset=UTF-8",
             "Accept": "*/*",
-            "x-redlock-auth": pc_api.token,
+            "x-redlock-auth": token,
         }
     else:
         return {
             "Content-Type": "application/json; charset=UTF-8",
             "Accept": "*/*",
-            "Authorization": pc_api.token,
+            "Authorization": token,
         }
 
 

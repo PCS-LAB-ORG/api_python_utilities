@@ -13,7 +13,6 @@
 # pip install pprintpp requests prismacloud-api
 import time
 import csv
-import logging
 import os
 import json
 import sys
@@ -21,8 +20,6 @@ import zipfile
 import grequests
 import requests # Needs to come after 'import grequests'
 import urllib.parse
-
-from pcpi import session_loader, saas_session_manager
 
 from datetime import datetime as dt
 
@@ -32,28 +29,27 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
 from apu.utils import login, logger, constants
+from apu.sbom import core
+
+logger = logger.logger
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
+log_dir = f"{constants.log_dir}/dt.now().strftime('%Y-%m-%d_%H-%M-%S')"
 if not os.path.exists(log_dir):
     os.makedirs(log_dir)
 
 logger.info(f"Python version: {sys.version}")
 
 def srcs_by_concrete_id(id):
-    global cspm_session
-    url = f"{cspm_session.api_url}/bridgecrew/api/v1/sbom/srcs-by-concreteId"
+    url = f"{login.cspm_session.api_url}/bridgecrew/api/v1/sbom/srcs-by-concreteId"
     # example 'ConcretePackage_javaScript_@angular-devkit/build-optimizer_0.1300.4_https://registry.npmjs.org/'
     payload = json.dumps({
        "concreteId": id
     })
-    headers = {
-        'accept': 'application/json, text/plain, */*',
-        'authorization': cspm_session.token,
-        'content-type': 'application/json',
-    }
+    # headers = login.headers
 
-    return grequests.request("POST", url, headers=headers, data=payload)
+    return grequests.request("POST", url, headers=login.headers, data=payload)
 
 def process_source_responses(response):
     try:
@@ -84,8 +80,9 @@ def exception_handler(request, exception):
     retry_sources.append(concrete_id)
     return response
 
-filters = core.get_filters() # TODO do I need this? 
-dependencies = core.dependencies(filters)
+login.login(lib="pcpi")
+# filters = core.get_filters() # TODO do I need this? 
+dependencies = core.dependencies()
 
 repos_found = {}
 dep_count = len(dependencies)
@@ -109,7 +106,7 @@ for dep in dependencies:
             logger.error("This should only be unrecognized errors.")
             raise e
 
-file=f"{log_dir}/merged_file_{constants.now}.csv"
+file=f"{constants.log_dir}/merged_file_{constants.now}.csv"
 with open(file=file, mode="a", newline="") as merger:
     merged_writer = csv.DictWriter(f=merger, fieldnames=['Package', 'Version', 'Fix Version', 'Git Org', 'Git Repository', 'Line(s)',  'Path', 'Registry URL', 'Root Package', 'Root Version', 'Severity', 'Vulnerability', 'Licenses'])
     merged_writer.writeheader()
