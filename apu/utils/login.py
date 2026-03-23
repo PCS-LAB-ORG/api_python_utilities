@@ -33,13 +33,6 @@ def user_pass(debug=False, redlock=None, url="https://api2.prismacloud.io/", ide
     global headers
     headers = get_headers(redlock, pc_api.token)
 
-    # print('Prisma Cloud API Current User:')
-    # print(pc_api.current_user())
-    # print('Prisma Cloud Compute API Intelligence:')
-    # print(pc_api.statuses_intelligence())
-
-    # print('Prisma Cloud API Object:')
-    # print(pc_api)
     return pc_api
 
 def get_settings_file_name(credential_name="credentials"):
@@ -47,23 +40,32 @@ def get_settings_file_name(credential_name="credentials"):
 
 
 def common_settings_file(credential_name="credentials"):
-    with open(get_settings_file_name(credential_name=credential_name)) as creds:
-        creds_json = json.load(creds)[0]
-        DOMAIN = creds_json["url"]
-        PRISMA_ACCESS_KEY = creds_json["identity"]
-        PRISMA_SECRET_KEY = creds_json["secret"]
-
-    # Settings for Prisma Cloud Enterprise Edition
     global settings
-    settings = {
-        "url": DOMAIN,
-        "identity": PRISMA_ACCESS_KEY,
-        "secret": PRISMA_SECRET_KEY,
-    }
+    try:
+        with open(get_settings_file_name(credential_name=credential_name)) as creds:
+            creds_json = json.load(creds)[0]
+            settings = {
+                "url": creds_json["url"],
+                "identity": creds_json["identity"],
+                "secret": creds_json["secret"],
+            }
+    except FileNotFoundError as e:
+        logger.warn(e)
+        logger.info("Using environment variables")
+        DOMAIN = os.environ.get("URL", default="<URL not found>")
+        PRISMA_ACCESS_KEY = os.environ.get("IDENTITY",  default="<IDENTITY not found>")
+        PRISMA_SECRET_KEY = os.environ.get("SECRET",  default="<SECRET not found>")
+        settings = {
+            "url": os.environ.get("URL"),
+            "identity": os.environ.get("IDENTITY"),
+            "secret": os.environ.get("SECRET"),
+        }
     return settings
 
 
 def login(debug=False, redlock=None, credential_name="credentials", lib="pc_api"):
+    if not credential_name and lib == "pc_api":
+        quit("Credential file not given so using environment variables. Only prismacloud-api is supported.")
     if lib == "pc_api":
         return login_pc_api(debug=False, redlock=None, credential_name="credentials")
     elif lib == "pcpi":
@@ -73,17 +75,16 @@ def login(debug=False, redlock=None, credential_name="credentials", lib="pc_api"
 
 
 def login_pc_api(debug=False, redlock=None, credential_name="credentials"):
+
     settings = common_settings_file(credential_name=credential_name)
     pc_api.configure(settings=settings)
-    pc_api.debug = debug
 
+    pc_api.debug = debug
     payload = ""
 
     global headers
     headers = get_headers(redlock, pc_api.token)
-
     return pc_api
-
 
 def login_pcpi(redlock=None, logger=None, credential_name="credentials"):
     settings = get_settings_file_name(credential_name=credential_name)
@@ -106,7 +107,7 @@ def login_pcpi(redlock=None, logger=None, credential_name="credentials"):
 
 def get_headers(redlock=True, token=None):
 
-    global headers
+    global redlock
     if redlock:
         return {
             "Content-Type": "application/json; charset=UTF-8",
