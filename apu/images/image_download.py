@@ -10,7 +10,7 @@ from apu.utils import (
     http_logging,
 )  # importing this should trigger the login procedure
 
-url = f"{settings["url"]}/uve/api/v3/vulnerabilities/download"
+url = f"{login.settings["url"]}/uve/api/v3/vulnerabilities/download"
 
 payload = json.dumps(
     {

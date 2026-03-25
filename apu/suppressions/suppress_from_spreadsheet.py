@@ -223,11 +223,11 @@ def suppress(file_path):
         
         if finding['Title'] in policies_by_title:
             policy_id = policies_by_title[finding['Title']]['violationId']
-            uuid = policies_by_title[finding['Title']]['uuid']
+            uuid = policies_by_title[finding['Title']].get('uuid')
 
         if not finding['Policy reference'] == '-' and finding['Policy reference'] in policies_by_guide:
             policy_id_by_guide = policies_by_guide[finding['Policy reference']]['policyId']
-            uuid = policies_by_guide[finding['Policy reference']]['uuid']
+            uuid = policies_by_guide[finding['Policy reference']].get('uuid')
         
         if not policy_id_by_guide == policy_id and not 0 == len(policy_id_by_guide): # I dont think there can be a policy reference for custom policies. If this is untrue then use the title match as the definitive check.
             print(f"Error: {finding}") # I found this logic really challenging to determine. Can the policy names be the same? 
@@ -238,7 +238,7 @@ def suppress(file_path):
         derived_file_path_with_commit, code_lines = finding_code_line_to_policy_finding(finding, policy_list) 
         expiration = get_expiration(finding)
 
-
+        quit("Not ready for testing")
 
         if not 0 == len(derived_file_path_with_commit):
             # pass #while testing on some data

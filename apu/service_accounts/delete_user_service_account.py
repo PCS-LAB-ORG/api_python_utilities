@@ -22,7 +22,7 @@ settings = {
 id = "<my username>"
 id = "miles-service-account-85"
 
-url = f"{settings["url"]}/user/{id}"
+url = f"{login.settings["url"]}/user/{id}"
 
 pc_api.configure(settings=settings)
 

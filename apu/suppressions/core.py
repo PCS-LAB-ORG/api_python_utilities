@@ -77,7 +77,7 @@ def create_suppression(comment, policyId, account_id, file_path, code_lines, exp
     '''
 
     # resource uuid and policy uuid are matching and represent the finding id needed for weaknesses
-    if category is "Weaknesses":
+    if category == "Weaknesses":
         
         url = f"{login.settings['url']}/bridgecrew/api/v1/suppressions"
         payload_js = {
@@ -93,7 +93,7 @@ def create_suppression(comment, policyId, account_id, file_path, code_lines, exp
             # {"comment":"asdf","expirationTime":1771056000000,"suppressionType":"Resources","resources":{"accountId":"jumiles/webgoat","id":"BC_GIT_6::jumiles/webgoat::/src/test/java/org/owasp/webgoat/lessons/missingac/MissingFunctionACUsersTest.java:91a33f0e448feb0845cba10cb0d9ac38cf19294d"},"origin":"Platform"}
             payload_js["expiration"] = expiration
         
-    if category is "Secrets":
+    if category == "Secrets":
         url = f"{login.settings['url']}/bridgecrew/api/v1/suppressions/{policyId}"
         payload_js = {
             "comment": f"{today} {policyId}::{account_id}::{file_path} {code_lines}\nComment: {comment}",
@@ -115,8 +115,8 @@ def create_suppression(comment, policyId, account_id, file_path, code_lines, exp
     print(f"Suppressed: {response.text} {account_id} {policyId}::{account_id}::{file_path} {comment}")
 
 def delete(policy, suppression):
-    suppression_id = ""  # UUID Format
-    policy_id = ""  # like BC_GIT_2
+    suppression_id = suppression['id']  # UUID Format
+    policy_id = policy['policyId']  # like BC_GIT_2
 
     url = f"{login.settings['url']}/api/v1/suppressions/{policy_id}/justifications/{suppression_id}"
     response = requests.request("DELETE", url, headers=login.headers)

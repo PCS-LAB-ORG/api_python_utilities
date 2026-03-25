@@ -214,7 +214,7 @@ def get_vcs_repository_page(local_file):
     }
     payload = json.dumps(repo_filter)
     print("post get_vcs_repository_page")
-    url = f"{settings['url']}/code/api/v1/vcs-repository/repositories"
+    url = f"{login.settings['url']}/code/api/v1/vcs-repository/repositories"
     response = requests.request("POST", url, headers=headers, data=payload)
     try:
         response.raise_for_status()
@@ -302,7 +302,7 @@ def compare_local(local_file):
 
 
 def get_enforcement_rules():
-    url = f"{settings['url']}/code/api/v1/enforcement-rules"
+    url = f"{login.settings['url']}/code/api/v1/enforcement-rules"
     payload = ""
     response = requests.request("GET", url, headers=headers, data=payload)
     response.raise_for_status()
@@ -314,7 +314,7 @@ def get_enforcement_rules():
 def add_rule(archived_repo_id_name, matching_name_id):
     # Create/update an enforcement rule exception to set all archived repos to OFF for all categories
     # 'id' and 'fullName' are needed from the vcs call
-    url = f"{settings['url']}/code/api/v1/enforcement-rules"
+    url = f"{login.settings['url']}/code/api/v1/enforcement-rules"
 
     exception_definition["name"] = exception_name
     exception_definition["repositories"] = archived_repo_id_name
@@ -339,7 +339,7 @@ def add_rule(archived_repo_id_name, matching_name_id):
     payload = json.dumps(exception_definition)
     if args.verbose:
         http_logging()
-    # url = f"{settings['url']}/bridgecrew/api/v1/enforcement-rules"
+    # url = f"{login.settings['url']}/bridgecrew/api/v1/enforcement-rules"
     response = requests.request(request_method, url, headers=headers, data=payload)
     response.raise_for_status()
     print(f"Created/Updated Exception\n{response.text}")

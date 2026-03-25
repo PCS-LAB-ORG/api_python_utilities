@@ -48,7 +48,7 @@ settings = {
 }
 # os.environ["PRISMA_ACCESS_KEY"] # using an environment variable
 
-url = f"{settings["url"]}/v3/user"
+url = f"{login.settings["url"]}/v3/user"
 
 pc_api.configure(settings=settings)
 
