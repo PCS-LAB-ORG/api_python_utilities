@@ -151,7 +151,7 @@ headers = {
 }
 
 
-def get_expiration_stamp(days):
+def days_to_timestamp(days):
     # future_date_utc = datetime(2026, 1, 1, 10, 30, 0)
     # Year, Month, Day, Hour, Minute, Second
     from datetime import datetime, timedelta
@@ -247,7 +247,7 @@ else:
     # Check that error codes make sense for use or parse and print
     if args.force or "y" != input(f"Delete key {access_key}?\n(y) >>> "):
         quit()
-    url = f"{settings['url']}/access_keys/{access_key}"
+    url = f"{login.settings['url']}/access_keys/{access_key}"
     response = requests.request("DELETE", url, headers=headers, data=payload)
     response.raise_for_status()
     print(f"Deleted status code {response.status_code} {response.text}\n")
@@ -255,7 +255,7 @@ else:
 # Get expiration date
 days_till_expiration = args.expiration_in_days
 print(f"Expiration set to {days_till_expiration} days from today")
-sats = get_expiration_stamp(days_till_expiration)
+sats = days_to_timestamp(days_till_expiration)
 
 if args.service_account:
     service_account_name = args.service_account
@@ -266,7 +266,7 @@ payload = json.dumps(
 )
 
 # Create access key
-url = f"{settings['url']}/access_keys"
+url = f"{login.settings['url']}/access_keys"
 response = requests.request("POST", url, headers=headers, data=payload)
 response.raise_for_status()
 

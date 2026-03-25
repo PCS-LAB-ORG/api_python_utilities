@@ -10,27 +10,28 @@ import requests
 from apu.utils import login, http_logging # importing this should trigger the login procedure
 
 def get():
+    # pc_api.access_keys_list_read()
     url = f"{login.settings['url']}/access_keys"
     payload = {}
     response = requests.request("GET", url, headers=login.headers, data=payload)
     response.raise_for_status()
     return json.loads(response.text)
 
-def delete(key_id):
+def delete(key=None, key_id=None):
+    # pc_api.access_key_delete()
     # Read access key id from script arguments
-    if not key_id:
-        quit("Must provide access key id `python delete_key.py 1234...`")
+    key = key_or_id(key=None, key_id=None)
 
-    url = f"{settings['url']}/access_keys/{key_id}"
+    url = f"{login.settings['url']}/access_keys/{key_id}"
     payload = {}
     response = requests.request("DELETE", url, headers=login.headers, data=payload)
     response.raise_for_status()
     print(f"{response.status_code} {response.text}")
 
 def add(days_till_expiration=90, key_name="My Prisma Key", key_output_file_name="access_key.json"):
-    url = f"{settings['url']}/access_keys"
+    url = f"{login.settings['url']}/access_keys"
 
-    sats = get_expiration_stamp(days_till_expiration)
+    sats = days_to_timestamp(days_till_expiration)
     payload = json.dumps({"expiresOn": sats, "name": key_name})
 
     response = requests.request("POST", url, headers=login.headers, data=payload)
@@ -40,7 +41,24 @@ def add(days_till_expiration=90, key_name="My Prisma Key", key_output_file_name=
     with open(key_output_file_name, "w") as output:
         output.writelines(js_res)
 
-def get_expiration_stamp(days):
+
+def add(key):
+    days_till_expiration = 90
+    key_name = "My Prisma Key"
+    key_output_file_name = "access_key.json"
+    url = f"{login.settings['url']}/access_keys"
+
+    sats = days_to_timestamp(days_till_expiration)
+    payload = json.dumps({"expiresOn": sats, "name": key_name})
+
+    response = requests.request("POST", url, headers=login.headers, data=payload)
+    response.raise_for_status()
+    js_res = json.loads(response.text)
+    # pprint.pprint(js_res)
+    with open(key_output_file_name, "w") as output:
+        output.writelines(js_res)
+
+def days_to_timestamp(days):
     # 1753206001977 epoch
     # 1753290980327 first request
     # 1753292246888 second request
@@ -60,6 +78,17 @@ def get_expiration_stamp(days):
     sats = str(timestamp_float).replace(".", "")[:13]  # Get first 13 characters
     return sats
 
+def is_expired(key=None, key_id=None):
+    key = key_or_id(key=None, key_id=None)
+    return key['status'] == "expired"
+
+def key_or_id(key=None, key_id=None):
+    if key:
+        return key
+    elif key_id:
+        return pc_api.access_key_read(key_id)
+    else:
+        raise("key not found")
 
 if __name__ == "__main__":
     login.login()
