@@ -1,5 +1,4 @@
 #!/bin/bash python
-# https://pan.dev/prisma-cloud/api/code/get-tags/
 
 # Prerequisite packages to run this script.
 # pip install pprintpp requests prismacloud-api
@@ -25,13 +24,26 @@ def user_pass(debug=False, redlock=None, url="https://api2.prismacloud.io/", ide
         "secret": secret
     }
 
-    pc_api.configure(settings=settings)
-    pc_api.debug = debug
+    url = f"{url}login"
 
-    payload = ""
+    # To generate a token, you must have an access key and include the following values in 
+    # the request body parameter — access key ID as the username and your secret key as the password. 
+    # https://pan.dev/prisma-cloud/api/cspm/app-login/
+
+    # payload = f"{'password': '{js_creds["secret"]}', 'username': '{js_creds["identity"]}'}"
+    # payload = "{\"password\": \"" + secret + "\", \"username\": \"" + identity + "\"}"
+    payload = json.dumps({'username': identity, 'password': secret})
 
     global headers
-    headers = get_headers(redlock, pc_api.token)
+    headers = {
+        'Content-Type': 'application/json'
+    }
+
+    response = requests.request("POST", url, headers=headers, data=payload)
+    js_res = json.loads(response.text)
+    response.raise_for_status()
+
+    headers.update(get_headers(redlock, pc_api.token))
 
     return pc_api
 
@@ -62,14 +74,24 @@ def common_settings_file(credential_name="credentials"):
         }
     return settings
 
+# TODO write in the login function to take the access/secret/url and cycle through login options. 
 
-def login(debug=False, redlock=None, credential_name="credentials", lib="pc_api"):
-    if not credential_name and lib == "pc_api":
-        quit("Credential file not given so using environment variables. Only prismacloud-api is supported.")
-    if lib == "pc_api":
-        return login_pc_api(debug=False, redlock=None, credential_name="credentials")
+def login(debug=False, redlock=None, credential_name="credentials", lib="pc_api", access_key=None, secret_key=None, url=None):
+    ''' what priority order do I want to assume here? '''
+    '''
+    Anything passed comes first. 
+    More local gets priority.
+    Do we allow dieriving partial info when passed to the function?
+        
+    '''
+    if access_key and secret_key and url:
+        return user_pass(debug=debug, redlock=redlock, url=url, identity=access_key, secret=secret_key)
+    elif lib == "pc_api":
+        if not credential_name:
+            quit("Credential file not given so using environment variables. Only prismacloud-api is supported.")
+        return login_pc_api(debug=debug, redlock=redlock, credential_name=credential_name)
     elif lib == "pcpi":
-        return login_pcpi(redlock=None, credential_name="credentials")
+        return login_pcpi(redlock=redlock, credential_name=credential_name)
     else:
         raise ("Unknown login library")
 
@@ -107,7 +129,7 @@ def login_pcpi(redlock=None, logger=None, credential_name="credentials"):
 
 def get_headers(redlock=True, token=None):
 
-    global redlock
+    # global redlock
     if redlock:
         return {
             "Content-Type": "application/json; charset=UTF-8",
