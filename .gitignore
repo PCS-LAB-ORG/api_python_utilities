@@ -11,3 +11,4 @@ dist/
 .coverage
 logs*
 tests/results/
+.vscode/tasks.json
