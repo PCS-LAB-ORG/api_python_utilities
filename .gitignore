@@ -9,3 +9,5 @@ __pycache__/
 dist/
 *.pkl
 .coverage
+logs*
+tests/results/

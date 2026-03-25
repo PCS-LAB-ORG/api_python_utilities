@@ -46,3 +46,7 @@ exclude = [
     ".ipynb_checkpoints",
     "*cred*"
 ]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = [ "--junitxml=tests/results/report.xml", "--log-file=tests/results/test_logs.log", "--cov=tests/results/", "--alluredir=tests/results/", "-v"]
