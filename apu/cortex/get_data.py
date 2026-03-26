@@ -1,14 +1,13 @@
 import sys
-import os
 import requests
 import json
 import pprint
-from dotenv import dotenv_values
-from pathlib import Path
 
+import login
+domain, headers = login.login()
 
-config = dotenv_values(f"{Path.home()}/.cortexcloud/lab.py")
-url = f"{config.get('CORTEX_DOMAIN')}/public_api/v1/xql/lookups/get_data"
+url = f"{domain}/public_api/v1/xql/lookups/get_data"
+
 
 if not len(sys.argv) > 1:
     raise("Table name is required")
@@ -39,13 +38,7 @@ payload = {
         "limit": limit
     }
 }
-headers = {
-    "Authorization": config.get("CORTEX_API_KEY"),
-    "x-xdr-auth-id": config.get("CORTEX_API_KEY_ID"),
-    "Accept-Encoding": "",
-    "Content-Type": "application/json",
-    "Accept": "application/json"
-}
+
 
 response = requests.post(url, json=payload, headers=headers)
 try:
