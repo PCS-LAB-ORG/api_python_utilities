@@ -36,7 +36,7 @@ def test_with_inactive():
         assert "401" in e.code
         assert "inactive_access_key" in e.code
         
-def test_access_key1():
+def test_access_key_blank_secret():
     ''' rotate on failure may be a login flag I want to use '''
     try:
         # using a known deleted access_key/secret_key
@@ -45,14 +45,14 @@ def test_access_key1():
     except Exception as e:
         logger.info(e)
         
-def test_access_key():
+def test_access_key_no_secret():
     ''' rotate on failure may be a login flag I want to use '''
     # using a known deleted access_key/secret_key
     login.login(url="https://api2.prismacloud.io/", access_key="")
     # This successfully logs in
     assert len(login.headers['identity']) == 13
     
-def test_access_key2():
+def test_invalid_user_pass():
     ''' rotate on failure may be a login flag I want to use '''
     try:
         # using a known deleted access_key/secret_key
