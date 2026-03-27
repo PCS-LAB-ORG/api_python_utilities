@@ -63,3 +63,11 @@ def test_invalid_user_pass():
             assert js_res.get("message") == "invalid_credentials"
             assert e.response.reason == "Unauthorized"
         # logger.info(e)
+
+def test_env_var_login():
+    ''' rotate on failure may be a login flag I want to use '''
+    try:
+        # using a known deleted access_key/secret_key
+        login.login(credential_name="")
+    except FileNotFoundError as e:
+        logger.info(e)

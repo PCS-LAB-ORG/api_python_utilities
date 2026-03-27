@@ -7,12 +7,13 @@ import os
 from pathlib import Path
 
 import requests
+
 from pcpi import session_loader
 from prismacloud.api import pc_api
-from pcpi import session_loader
 
 from apu.utils import logger
 
+logger = logger.logger
 settings = {}
 cspm_session = {}
 session_man = {}
@@ -20,7 +21,12 @@ headers = {}
 
 def user_pass(debug=False, redlock=None, url="https://api2.prismacloud.io/", identity="", secret=""):
     # Settings for Prisma Cloud Enterprise Edition
-
+    if not url:
+        url = os.environ.get("URL")
+    if not identity:
+        identity = os.environ.get("IDENTITY")
+    if not secret:
+        secret = os.environ.get("SECRET")
     settings = {
         "url": url,
         "username": identity, # access key
@@ -91,19 +97,20 @@ def login(debug=False, redlock=None, credential_name="credentials", lib="pc_api"
         return user_pass(debug=debug, redlock=redlock, url=url, identity=access_key, secret=secret_key)
     elif lib == "pc_api":
         if not credential_name:
-            quit("Credential file not given so using environment variables. Only prismacloud-api is supported.")
+            logger.debug("Credential file not given so using environment variables. Only prismacloud-api is supported.")
         return login_pc_api(debug=debug, redlock=redlock, credential_name=credential_name)
     elif lib == "pcpi":
         return login_pcpi(redlock=redlock, credential_name=credential_name)
     else:
-        raise ("Unknown login library")
+        raise Exception("Unknown login library")
 
 
 def login_pc_api(debug=False, redlock=None, credential_name="credentials"):
 
     settings = common_settings_file(credential_name=credential_name)
     pc_api.configure(settings=settings)
-
+    if None is pc_api.token:
+        raise FileNotFoundError("Authentication with prismacloud.api env vars URL, IDENTITY, and SECRET failed.")
     pc_api.debug = debug
 
     global headers
