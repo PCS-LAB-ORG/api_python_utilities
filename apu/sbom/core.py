@@ -4,6 +4,7 @@
 # Prerequisite packages to run this script.
 # pip install pprintpp requests prismacloud-api
 import json
+import requests
 import xml.etree.ElementTree as etree
 
 from apu.utils import (
@@ -47,7 +48,7 @@ def dependencies(filters=None):
     return dependencies
 
 def sbom():
-    
+
     payload = ""
 
     format = "cyclonedx"
@@ -75,7 +76,7 @@ def sbom():
             file.writelines(etree.tostring(root, encoding="unicode"))
 
 def get_filters():
-    
+
     url = f"{login.cspm_session.api_url}/bridgecrew/api/v1/sbom/filters"
 
     payload = {}

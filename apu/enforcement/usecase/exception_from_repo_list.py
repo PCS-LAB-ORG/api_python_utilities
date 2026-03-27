@@ -216,7 +216,7 @@ def get_vcs_repository_page(local_file):
     payload = json.dumps(repo_filter)
     print("post get_vcs_repository_page")
     url = f"{login.settings['url']}/code/api/v1/vcs-repository/repositories"
-    response = requests.request("POST", url, headers=headers, data=payload)
+    response = requests.request("POST", url, headers=login.headers, data=payload)
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError as e:
@@ -305,7 +305,7 @@ def compare_local(local_file):
 def get_enforcement_rules():
     url = f"{login.settings['url']}/code/api/v1/enforcement-rules"
     payload = ""
-    response = requests.request("GET", url, headers=headers, data=payload)
+    response = requests.request("GET", url, headers=login.headers, data=payload)
     response.raise_for_status()
     # rule_id_list = []
     return json.loads(response.text)
@@ -341,7 +341,7 @@ def add_rule(archived_repo_id_name, matching_name_id):
     if args.verbose:
         http_logging()
     # url = f"{login.settings['url']}/bridgecrew/api/v1/enforcement-rules"
-    response = requests.request(request_method, url, headers=headers, data=payload)
+    response = requests.request(request_method, url, headers=login.headers, data=payload)
     response.raise_for_status()
     print(f"Created/Updated Exception\n{response.text}")
 

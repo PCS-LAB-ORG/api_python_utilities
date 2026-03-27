@@ -57,7 +57,7 @@ headers = {
     "x-redlock-auth": pc_api.token,
 }
 
-response = requests.request("GET", url, headers=headers, data=payload)
+response = requests.request("GET", url, headers=login.headers, data=payload)
 
 service_accounts = []
 user_list = json.loads(response.text)

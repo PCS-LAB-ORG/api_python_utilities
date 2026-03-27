@@ -8,7 +8,7 @@ url = f"{domain}/public_api/v1/xql/get_datasets"
 
 payload = { "request_data": {} }
 
-response = requests.post(url, json=payload, headers=headers)
+response = requests.post(url, json=payload, headers=login.headers)
 try:
     response.raise_for_status()
     res_js = json.loads(response.text)

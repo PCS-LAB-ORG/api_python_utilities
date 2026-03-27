@@ -7,13 +7,15 @@ import requests
 
 from apu.utils import (
     login,
-    http_logging,
+    # http_logging,
 )  # importing this should trigger the login procedure
 
 # http_logging.http_logging()
 
 
 payload = {}
+
+url = f"{login.settings["url"]}/user/role"
 
 response = requests.request("GET", url, headers=login.headers, data=payload)
 

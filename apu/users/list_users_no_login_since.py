@@ -4,16 +4,12 @@
 Script to collect users that have not logged in for 180 days (set days_since_login).
 This will output a list of those users with their last login time or Never.
 """
-days_since_login = 180
-
 from datetime import datetime, timedelta
 
-from apu.utils import (
-    login,
-    http_logging,
-)  # importing this should trigger the login procedure
+from apu.users import core
 
 # http_logging.http_logging()
+days_since_login = 180
 
 def list(days_since_login):
     expiring_user_list = []

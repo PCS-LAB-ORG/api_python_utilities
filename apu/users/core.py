@@ -1,12 +1,15 @@
+import json
 import requests
 
-from apu.utils import files
+from prismacloud.api import pc_api
 
+from apu.utils import files, login
+from apu.utils import core
 
 def get():
     # Get user list
     url = f"{login.settings['url']}/v3/user"
-    response = requests.request("GET", url, headers=login.headers, data=payload)
+    response = requests.request("GET", url, headers=login.headers)
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError as e:
@@ -14,8 +17,9 @@ def get():
             quit(response.text)
 
     user_list = json.loads(response.text)
+    return user_list
 
-def create(user, accessKeysAllowed=True, activeRole={}, defaultRoleId=None, email=None, firstName=None, lastName=None, roleIds=None, timeZone=None):
+def create(user={}, accessKeysAllowed=True, activeRole={}, defaultRoleId=None, email=None, firstName=None, lastName=None, roleIds=None, timeZone=None):
     ''' https://pan.dev/prisma-cloud/api/cspm/add-user-v-2/ '''
     # Expected format. See API def in pan.dev
     user_attr = {

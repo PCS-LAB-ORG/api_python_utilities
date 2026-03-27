@@ -4,22 +4,29 @@
 # Prerequisite packages to run this script.
 # pip install pprintpp requests prismacloud-api
 import json
+import requests
+from prismacloud.api import pc_api
+
 from apu.utils import (
     login,
-    http_logging,
+    # http_logging,
     constants
 )  # importing this should trigger the login procedure
 
 # http_logging.http_logging()
 
-def list(role):
+def list(role=None):
     url = f"{login.settings['url']}/user/role"
-    payload = {}
 
-    response = requests.request("GET", url, headers=headers, data=payload)
+    response = requests.request("GET", url, headers=login.headers)
     response.raise_for_status()
-    return json.loads(response.text)
-
+    role_list = json.loads(response.text)
+    if not role:
+        return role_list
+    else:
+        for r in role_list:
+            if role.get("name") == r.get("name"):
+                return r
     # files.list_to_csv(file_name, json_role)
 
 def update_user(user, user_dict=None):

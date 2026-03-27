@@ -38,7 +38,7 @@ def user_pass(debug=False, redlock=None, url="https://api2.prismacloud.io/", ide
         'Content-Type': 'application/json'
     }
 
-    response = requests.request("POST", url, headers=headers, data=payload)
+    response = requests.request("POST", url, headers=login.headers, data=payload)
     js_res = json.loads(response.text)
     response.raise_for_status()
 
@@ -61,7 +61,7 @@ def common_settings_file(credential_name="credentials"):
                 "secret": creds_json["secret"],
             }
     except FileNotFoundError as e:
-        logger.warn(e)
+        logger.warning(e)
         logger.info("Using environment variables")
         DOMAIN = os.environ.get("URL", default="<URL not found>")
         PRISMA_ACCESS_KEY = os.environ.get("IDENTITY",  default="<IDENTITY not found>")

@@ -248,7 +248,7 @@ else:
     if args.force or "y" != input(f"Delete key {access_key}?\n(y) >>> "):
         quit()
     url = f"{login.settings['url']}/access_keys/{access_key}"
-    response = requests.request("DELETE", url, headers=headers, data=payload)
+    response = requests.request("DELETE", url, headers=login.headers, data=payload)
     response.raise_for_status()
     print(f"Deleted status code {response.status_code} {response.text}\n")
 
@@ -267,7 +267,7 @@ payload = json.dumps(
 
 # Create access key
 url = f"{login.settings['url']}/access_keys"
-response = requests.request("POST", url, headers=headers, data=payload)
+response = requests.request("POST", url, headers=login.headers, data=payload)
 response.raise_for_status()
 
 # Parse response and write to file

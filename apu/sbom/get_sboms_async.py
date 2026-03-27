@@ -52,7 +52,7 @@ def process_source_responses(response):
         if response.status_code == 504:
             logger.error(id, response.status_code)
         elif response.status_code == 401:
-            logger.warn(f"Code: {response.status_code}: {response.reason} - {response.url}")
+            logger.warning(f"Code: {response.status_code}: {response.reason} - {response.url}")
             cspm_session = session_manager.create_cspm_session()
             return
         else:
@@ -61,15 +61,16 @@ def process_source_responses(response):
     repos_found.extend(json.loads(res.text))
     return repos_found
 
+#  pylint: disable=unused-argument
 def exception_handler(request, exception):
     response = exception.response
     if response.status_code == 504:
         logger.error(id, response.status_code)
     elif response.status_code == 401:
-        logger.warn(f"Code: {response.status_code}: {response.reason} - {response.url}")
+        logger.warning(f"Code: {response.status_code}: {response.reason} - {response.url}")
         # cspm_session = session_manager.create_cspm_session()
     elif response.status_code == 403:
-        logger.warn(f"Code: {response.status_code}: {response.reason} - {response.url}")
+        logger.warning(f"Code: {response.status_code}: {response.reason} - {response.url}")
         # cspm_session = session_manager.create_cspm_session()
     retry_sources.append(concrete_id)
     return response
@@ -139,10 +140,10 @@ while should_retry and retry_count > 0 and len(retry_sources) > 0:
                 logger.error(id, response.status_code)
                 continue
             elif response.status_code == 401: # 
-                logger.warn(f"Code: {response.status_code}: {response.reason} - {response.url}")
+                logger.warning(f"Code: {response.status_code}: {response.reason} - {response.url}")
                 # cspm_session = session_manager.create_cspm_session()
             elif response.status_code == 403:
-                logger.warn(f"Code: {response.status_code}: {response.reason} - {response.url}")
+                logger.warning(f"Code: {response.status_code}: {response.reason} - {response.url}")
                 # cspm_session = session_manager.create_cspm_session()
             # retry_sources.append(concrete_id)
             else:

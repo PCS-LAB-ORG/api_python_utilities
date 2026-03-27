@@ -5,7 +5,8 @@
 
 import os
 from datetime import datetime as dt
-from apu.utils import login, files  # importing this should trigger the login procedure
+from apu.utils import files  # importing this should trigger the login procedure
+from apu.repositories import get_repo
 
 repository_list = get_repo.get_repositories(includeUnmappedProjects=True)
 

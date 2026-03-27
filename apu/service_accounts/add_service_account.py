@@ -11,7 +11,7 @@ import requests
 
 from apu.utils import (
     login,
-    http_logging,
+    # http_logging,
 )  # importing this should trigger the login procedure
 
 # http_logging.http_logging()
@@ -31,7 +31,7 @@ service_account_role_name = "Reduced Developer Role"
 service_account_role_id = ""
 role_name_url = f"{login.settings["url"]}/user/role"
 role_list_response = requests.request(
-    "GET", role_name_url, headers=headers, data=payload
+    "GET", role_name_url, headers=login.headers, data=payload
 )
 role_list_json = json.loads(role_list_response.text)
 for role in role_list_json:
@@ -51,7 +51,7 @@ payload = json.dumps(
     }
 )
 
-response = requests.request("POST", url, headers=headers, data=payload)
+response = requests.request("POST", url, headers=login.headers, data=payload)
 
 pprint.pprint(f"Request Status Code: {response.status_code}")
 with open("access_key.json", "w") as access_key:
