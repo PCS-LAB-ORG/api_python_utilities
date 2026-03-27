@@ -3,6 +3,7 @@ import pprint
 
 import login
 import requests
+from requests.exceptions import HTTPError
 
 domain, headers = login.login()
 
@@ -13,6 +14,5 @@ try:
     response.raise_for_status()
     js_res = json.loads(response.text)
     pprint.pprint(js_res)
-except Exception as e:
+except HTTPError as e:
     print(e)
-    

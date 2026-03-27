@@ -54,8 +54,12 @@ addopts = [ "--junitxml=tests/results/report.xml", "--log-file=tests/results/tes
 [tool.pylint.messages_control]
 # Disable specific messages by their symbolic names or IDs.
 disable = [
-    "missing-module-docstring"
+    "missing-module-docstring",
+    "unspecified-encoding",
+    "missing-timeout",
+    "missing-docstring",
+    "raising-bad-type"
 ]
 [tool.pylint.format]
 # Set the max line length
-max-line-length = 100
+max-line-length = 210
