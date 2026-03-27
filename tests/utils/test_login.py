@@ -14,6 +14,7 @@ def test_with_expired_access_key():
     except Exception as e:
         logger.info(e)
 
+# pylint: disable=no-member
 def test_with_deleted_access_key():
     ''' rotate on failure may be a login flag I want to use '''
     try:
@@ -25,6 +26,7 @@ def test_with_deleted_access_key():
             assert js_res.get("message") == "invalid_credentials"
             assert e.response.reason == "Unauthorized"
 
+# pylint: disable=unsupported-membership-test
 def test_with_inactive():
     ''' rotate on failure may be a login flag I want to use '''
     try:
@@ -33,7 +35,7 @@ def test_with_inactive():
     except SystemExit as e:
         assert "401" in e.code
         assert "inactive_access_key" in e.code
-        
+
 def test_access_key_blank_secret():
     ''' rotate on failure may be a login flag I want to use '''
     try:
@@ -42,14 +44,14 @@ def test_access_key_blank_secret():
         # This successfully logs in
     except Exception as e:
         logger.info(e)
-        
+
 def test_access_key_no_secret():
     ''' rotate on failure may be a login flag I want to use '''
     # using a known deleted access_key/secret_key
     login.login(url="https://api2.prismacloud.io/", access_key="")
     # This successfully logs in
     assert len(login.headers['identity']) == 13
-    
+
 def test_invalid_user_pass():
     ''' rotate on failure may be a login flag I want to use '''
     try:

@@ -7,14 +7,7 @@ import json
 
 import requests
 
-# from prismacloud.api import pc_api
-from apu.utils import (
-    login,
-    http_logging,
-)  # importing this should trigger the login procedure
-
-# http_logging.http_logging()
-
+from apu.utils import login # importing this should trigger the login procedure
 
 def get_tags():
     payload = ""

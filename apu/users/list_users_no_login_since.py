@@ -11,6 +11,7 @@ from apu.users import core
 # http_logging.http_logging()
 days_since_login = 180
 
+# pylint: disable=redefined-outer-name
 def list(days_since_login):
     expiring_user_list = []
 
@@ -20,8 +21,8 @@ def list(days_since_login):
         last_login = int(str(user["lastLoginTs"])[:10])
         try:
             # print("parse from datetime")
-            datetime_object = datetime.datetime.fromtimestamp(last_login)
-            current_date = datetime.datetime.now()
+            datetime_object = datetime.fromtimestamp(last_login)
+            current_date = datetime.now()
             time_difference = current_date - datetime_object
             outdated = time_difference > timedelta(days=days_since_login)
             if outdated:

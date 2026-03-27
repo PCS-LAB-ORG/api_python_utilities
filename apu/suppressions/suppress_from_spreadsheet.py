@@ -1,5 +1,3 @@
-#!python
-
 import csv
 from pathlib import Path
 from datetime import datetime
@@ -100,7 +98,16 @@ def name_from_source_id(source_id):
 
 def get_expiration(finding):
     # Valentines Day 2026 at 12:00am PST
-    # {"comment":"asdf","expirationTime":1771056000000,"suppressionType":"Resources","resources":{"accountId":"jumiles/webgoat","id":"BC_GIT_6::jumiles/webgoat::/src/test/java/org/owasp/webgoat/lessons/missingac/MissingFunctionACUsersTest.java:91a33f0e448feb0845cba10cb0d9ac38cf19294d"},"origin":"Platform"}
+    # {
+    #     "comment": "asdf",
+    #     "expirationTime": 1771056000000,
+    #     "suppressionType": "Resources",
+    #     "resources": {
+    #         "accountId": "jumiles/webgoat",
+    #         "id": "BC_GIT_6::jumiles/webgoat::/src/test/java/org/owasp/webgoat/lessons/missingac/MissingFunctionACUsersTest.java:91a33f0e448feb0845cba10cb0d9ac38cf19294d"
+    #     },
+    #     "origin": "Platform"
+    # }
     # expiration_time = 1756278000000
     expiration = -1
     if "Expiration" in finding and not 0 == len(finding["Expiration"]):
@@ -115,7 +122,7 @@ def finding_code_line_to_policy_finding(finding, policy_list):
         code_lines = finding["Code issue line"].split(", ") # '34, 35' is the variable's format
     if "-" in finding["Code issue line"]:
         code_lines = finding["Code issue line"].split("-") # '34, 35' is the variable's format
-    
+
     for policy in policy_list:
         # print(f"{policy['repository']} {policy['errorLines']} {policy['resourceId']} {policy['violationId']}")
         if not finding["Code category"] == policy["codeCategory"]:

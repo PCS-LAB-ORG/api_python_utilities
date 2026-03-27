@@ -2,8 +2,6 @@
 
 
 from apu.utils import (
-    login,
-    http_logging,
     constants,
     files
 )  # importing this should trigger the login procedure

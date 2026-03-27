@@ -5,10 +5,7 @@ import json
 
 import requests
 
-from apu.utils import (
-    login,
-    http_logging,
-)  # importing this should trigger the login procedure
+from apu.utils import login # importing this should trigger the login procedure
 
 url = f"{login.settings["url"]}/uve/api/v3/vulnerabilities/download"
 

@@ -9,9 +9,13 @@ from pathlib import Path
 import requests
 from pcpi import session_loader
 from prismacloud.api import pc_api
+from pcpi import session_loader
+
+from apu.utils import logger
 
 settings = {}
 cspm_session = {}
+session_man = {}
 headers = {}
 
 def user_pass(debug=False, redlock=None, url="https://api2.prismacloud.io/", identity="", secret=""):
@@ -19,32 +23,32 @@ def user_pass(debug=False, redlock=None, url="https://api2.prismacloud.io/", ide
 
     settings = {
         "url": url,
-        "identity": identity, # access key
-        "secret": secret
+        "username": identity, # access key
+        "password": secret
     }
 
     url = f"{url}login"
 
-    # To generate a token, you must have an access key and include the following values in 
-    # the request body parameter — access key ID as the username and your secret key as the password. 
+    # To generate a token, you must have an access key and include the following values in
+    # the request body parameter — access key ID as the username and your secret key as the password.
     # https://pan.dev/prisma-cloud/api/cspm/app-login/
 
     # payload = f"{'password': '{js_creds["secret"]}', 'username': '{js_creds["identity"]}'}"
     # payload = "{\"password\": \"" + secret + "\", \"username\": \"" + identity + "\"}"
-    payload = json.dumps({'username': identity, 'password': secret})
+    payload = json.dumps(settings)
 
     global headers
     headers = {
         'Content-Type': 'application/json'
     }
 
-    response = requests.request("POST", url, headers=login.headers, data=payload)
+    response = requests.request("POST", url, headers=headers, data=payload)
     js_res = json.loads(response.text)
     response.raise_for_status()
 
-    headers.update(get_headers(redlock, pc_api.token))
+    headers.update(get_headers(redlock, js_res.token))
 
-    return pc_api
+    return js_res
 
 def get_settings_file_name(credential_name="credentials"):
     return f"{Path.home()}/.prismacloud/{credential_name}.json"
@@ -66,14 +70,14 @@ def common_settings_file(credential_name="credentials"):
         DOMAIN = os.environ.get("URL", default="<URL not found>")
         PRISMA_ACCESS_KEY = os.environ.get("IDENTITY",  default="<IDENTITY not found>")
         PRISMA_SECRET_KEY = os.environ.get("SECRET",  default="<SECRET not found>")
-        settings = {
-            "url": os.environ.get("URL"),
-            "identity": os.environ.get("IDENTITY"),
-            "secret": os.environ.get("SECRET"),
+        return {
+            "url": DOMAIN,
+            "identity": PRISMA_ACCESS_KEY,
+            "secret": PRISMA_SECRET_KEY,
         }
     return settings
 
-# TODO write in the login function to take the access/secret/url and cycle through login options. 
+# TODO write in the login function to take the access/secret/url and cycle through login options.
 
 def login(debug=False, redlock=None, credential_name="credentials", lib="pc_api", access_key=None, secret_key=None, url=None):
     ''' what priority order do I want to assume here? '''
@@ -101,7 +105,6 @@ def login_pc_api(debug=False, redlock=None, credential_name="credentials"):
     pc_api.configure(settings=settings)
 
     pc_api.debug = debug
-    payload = ""
 
     global headers
     headers = get_headers(redlock, pc_api.token)
@@ -116,6 +119,7 @@ def login_pcpi(redlock=None, logger=None, credential_name="credentials"):
         session_managers = session_loader.load_config(
             file_path=settings, logger=logger
         )
+    global session_man
     session_man = session_managers[0]
     global cspm_session
     cspm_session = session_man.create_cspm_session()

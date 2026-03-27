@@ -7,13 +7,7 @@ import json
 import requests
 from prismacloud.api import pc_api
 
-from apu.utils import (
-    login,
-    # http_logging,
-    constants
-)  # importing this should trigger the login procedure
-
-# http_logging.http_logging()
+from apu.utils import login # importing this should trigger the login procedure
 
 def list(role=None):
     url = f"{login.settings['url']}/user/role"

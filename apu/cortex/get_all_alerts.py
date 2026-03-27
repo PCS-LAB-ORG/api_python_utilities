@@ -1,8 +1,8 @@
 import json
 
-import login
 import requests
 from requests.exceptions import HTTPError
+from apu.cortex import login
 
 domain, headers = login.login()
 url = f"{domain}/public_api/v1/alerts/get_alerts"
@@ -14,11 +14,11 @@ payload = {
     }
 }
 
-response = requests.post(url, json=payload, headers=login.headers)
+response = requests.post(url, json=payload, headers=headers)
 try:
     response.raise_for_status()
     res_js = json.loads(response.text)
-    
+
     print(res_js)
     # datasets = sorted(res_js['reply'], key=lambda entry: entry["Type"])
     # for data in datasets:

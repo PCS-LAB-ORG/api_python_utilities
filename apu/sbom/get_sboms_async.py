@@ -35,31 +35,31 @@ if not os.path.exists(log_dir):
 
 logger.info(f"Python version: {sys.version}")
 
-def srcs_by_concrete_id(id):
+def srcs_by_concrete_id(concrete_id):
     url = f"{login.cspm_session.api_url}/bridgecrew/api/v1/sbom/srcs-by-concreteId"
     # example 'ConcretePackage_javaScript_@angular-devkit/build-optimizer_0.1300.4_https://registry.npmjs.org/'
     payload = json.dumps({
-       "concreteId": id
+       "concreteId": concrete_id
     })
     # headers = login.headers
 
     return grequests.request("POST", url, headers=login.headers, data=payload)
 
-def process_source_responses(response):
-    try:
-        response.raise_for_status()
-    except requests.exceptions.HTTPError as err:
-        if response.status_code == 504:
-            logger.error(id, response.status_code)
-        elif response.status_code == 401:
-            logger.warning(f"Code: {response.status_code}: {response.reason} - {response.url}")
-            cspm_session = session_manager.create_cspm_session()
-            return
-        else:
-            raise err
+# def process_source_responses(response):
+#     try:
+#         response.raise_for_status()
+#     except requests.exceptions.HTTPError as err:
+#         if response.status_code == 504:
+#             logger.error(id, response.status_code)
+#         elif response.status_code == 401:
+#             logger.warning(f"Code: {response.status_code}: {response.reason} - {response.url}")
+#             cspm_session = login.session_manager.create_cspm_session()
+#             return
+#         else:
+#             raise err
     # for res_js in json.loads(res.text):
-    repos_found.extend(json.loads(res.text))
-    return repos_found
+    # repos_found.extend(json.loads(res.text))
+    # return repos_found
 
 #  pylint: disable=unused-argument
 def exception_handler(request, exception):
@@ -76,7 +76,7 @@ def exception_handler(request, exception):
     return response
 
 login.login(lib="pcpi")
-# filters = core.get_filters() # TODO do I need this? 
+# filters = core.get_filters() # TODO do I need this?
 dependencies = core.dependencies()
 
 repos_found = {}
@@ -97,7 +97,7 @@ for dep in dependencies:
             continue
         except ValueError as e:
             pass
-        except:
+        except Exception as e:
             logger.error("This should only be unrecognized errors.")
             raise e
 
@@ -135,11 +135,11 @@ while should_retry and retry_count > 0 and len(retry_sources) > 0:
         except Exception as exception:
             logger.error(exception)
             # retry_count -= 1
-            response = exception.response
+            response = exception.response # pylint: disable=no-member
             if response.status_code == 504:
                 logger.error(id, response.status_code)
                 continue
-            elif response.status_code == 401: # 
+            elif response.status_code == 401:
                 logger.warning(f"Code: {response.status_code}: {response.reason} - {response.url}")
                 # cspm_session = session_manager.create_cspm_session()
             elif response.status_code == 403:
@@ -156,7 +156,7 @@ while should_retry and retry_count > 0 and len(retry_sources) > 0:
             # retry_sources.append(concrete_id)
             continue
         elif async_request.response.status_code == 401 or async_request.response.status_code == 403:
-            reauth = True 
+            reauth = True
             continue
         elif not async_request.response.status_code == 200:
             continue
@@ -169,7 +169,7 @@ while should_retry and retry_count > 0 and len(retry_sources) > 0:
             else:
                 repos_found[package_repo_id].append(res)
         if concrete_id in retry_sources:
-            retry_sources.remove(concrete_id)    
+            retry_sources.remove(concrete_id)
         responses_processed.add(concrete_id)
         logger.info(f"Res Procd: {len(responses_processed)}, Marked Retry: {len(retry_sources)}, Index: {source_list.index(async_request)}, Adding: {len(res_js)}")
         async_request.session.close()
@@ -186,10 +186,11 @@ while should_retry and retry_count > 0 and len(retry_sources) > 0:
             cve_id = dependency['cves'][0]['id']
 
         for repo in package:
-            
+
             severity = dependency['maxSeverity'] or ""
 
             root_package = repo['tree']
+            root_package_version = ""
             if root_package:
                 if len(root_package) > 0:
                     if "->" in repo['tree']:

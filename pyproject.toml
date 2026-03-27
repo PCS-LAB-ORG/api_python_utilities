@@ -61,8 +61,16 @@ disable = [
     "missing-module-docstring",
     "raising-bad-type",
     "logging-fstring-interpolation",
-    "pointless-string-statement"
+    "pointless-string-statement",
+    "global-statement",
+    "missing-function-docstring",
+    "invalid-name", # I may be able to narrow this
+    "line-too-long",
+    "broad-exception-caught",
+    "redefined-outer-name",
+    "unnecessary-negation",
+    "broad-exception-raised"
 ]
 [tool.pylint.format]
 # Set the max line length
-max-line-length = 210
+max-line-length = 500
