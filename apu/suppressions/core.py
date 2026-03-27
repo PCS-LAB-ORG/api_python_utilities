@@ -7,10 +7,8 @@ import os
 import pprint
 
 import requests
-import json
 from apu.utils import (
-    login,
-    http_logging,
+    login, constants
 )  # importing this should trigger the login procedure
 
 login.login(redlock=False)  # Authorization header
@@ -76,10 +74,9 @@ def create_suppression(comment, policyId, account_id, file_path, code_lines, exp
     Policy
     Cves
     '''
-
+    url = ""
     # resource uuid and policy uuid are matching and represent the finding id needed for weaknesses
     if category == "Weaknesses":
-        
         url = f"{login.settings['url']}/bridgecrew/api/v1/suppressions"
         payload_js = {
             "policyIds": [policyId],
@@ -93,11 +90,11 @@ def create_suppression(comment, policyId, account_id, file_path, code_lines, exp
             # Valentines Day 2026 at 12:00am PST
             # {"comment":"asdf","expirationTime":1771056000000,"suppressionType":"Resources","resources":{"accountId":"jumiles/webgoat","id":"BC_GIT_6::jumiles/webgoat::/src/test/java/org/owasp/webgoat/lessons/missingac/MissingFunctionACUsersTest.java:91a33f0e448feb0845cba10cb0d9ac38cf19294d"},"origin":"Platform"}
             payload_js["expiration"] = expiration
-        
+
     if category == "Secrets":
         url = f"{login.settings['url']}/bridgecrew/api/v1/suppressions/{policyId}"
         payload_js = {
-            "comment": f"{today} {policyId}::{account_id}::{file_path} {code_lines}\nComment: {comment}",
+            "comment": f"{constants.today} {policyId}::{account_id}::{file_path} {code_lines}\nComment: {comment}",
             "suppressionType": "Resources",
             "resources": {
                 "accountId": account_id,
