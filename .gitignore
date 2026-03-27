@@ -13,3 +13,4 @@ logs*
 tests/results/
 .vscode/tasks.json
 *.exe
+apu/cortex/data/
