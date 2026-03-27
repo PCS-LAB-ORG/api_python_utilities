@@ -11,22 +11,17 @@
 
 # Prerequisite packages to run this script.
 # pip install pprintpp requests prismacloud-api
-import time
 import csv
 import os
 import json
 import sys
-import zipfile
 import grequests
 import requests # Needs to come after 'import grequests'
 import urllib.parse
 
 from datetime import datetime as dt
 
-from urllib.parse import urlparse
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
-from requests.adapters import HTTPAdapter
-from urllib3.util.retry import Retry
 
 from apu.utils import login, logger, constants
 from apu.sbom import core

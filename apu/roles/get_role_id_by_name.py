@@ -2,12 +2,9 @@
 
 import requests
 import json
-import pprint, sys, os
-from pathlib import Path
-from datetime import datetime
+import pprint
 
 
-from prismacloud.api import pc_api
 from apu.utils import (
     login,
     http_logging,

@@ -6,15 +6,10 @@
 # pip install pprintpp requests prismacloud-api
 
 import csv
-import json
-import pprint, sys, os
-from pathlib import Path
-import requests
 from datetime import datetime
 
 now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
-from apu.utils import login
 
 current_repository_list = None
 current_role_list = None

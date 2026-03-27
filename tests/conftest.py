@@ -1,6 +1,5 @@
 # conftest.py
 import pytest
-import requests
 from apu.utils import login
 
 

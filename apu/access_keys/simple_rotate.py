@@ -1,5 +1,4 @@
 from prismacloud.api import pc_api
-from apu.utils import login, logger
 
 # pc_api https://github.com/PaloAltoNetworks/prismacloud-api-python/
 # prismacloud/api/cspm/_endpoints.py

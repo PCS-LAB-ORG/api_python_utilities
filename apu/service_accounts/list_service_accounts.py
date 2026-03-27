@@ -3,12 +3,9 @@
 import requests
 import json
 import pprint, sys, os
-from pathlib import Path
-from datetime import datetime
 
 from prismacloud.api import pc_api
 
-from pathlib import Path
 
 sys.path.append(os.path.abspath(f".."))
 from creds_lab import PRISMA_ACCESS_KEY, PRISMA_SECRET_KEY

@@ -222,7 +222,6 @@ def parse_for_category(repo):
     language = ""
     if "fileType" in repo:
         language = repo['fileType']
-        pass
 
     repository_source = ""
     if "repositorySource" in repo:

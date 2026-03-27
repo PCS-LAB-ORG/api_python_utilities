@@ -3,9 +3,7 @@
 
 # Prerequisite packages to run this script.
 # pip install pprintpp requests prismacloud-api
-import os, sys
 import json
-import pprint
 import requests
 
 # from prismacloud.api import pc_api

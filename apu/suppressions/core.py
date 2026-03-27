@@ -3,7 +3,6 @@
 # https://pan.dev/prisma-cloud/api/code/get-suppressions/
 
 import os
-from pathlib import Path
 import pprint
 import requests
 import json

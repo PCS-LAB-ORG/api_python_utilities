@@ -1,6 +1,5 @@
 #!/python
 
-from apu.suppressions import suppress_from_spreadsheet
 
 @pytest.mark.xfail
 def test():

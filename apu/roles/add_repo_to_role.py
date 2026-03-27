@@ -5,10 +5,7 @@
 # Prerequisite packages to run this script.
 # pip install pprintpp requests prismacloud-api
 
-import json
-import pprint, sys, os
-from pathlib import Path
-import requests
+import pprint
 from datetime import datetime
 
 from prismacloud.api import pc_api

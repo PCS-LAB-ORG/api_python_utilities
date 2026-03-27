@@ -1,6 +1,5 @@
 #!python
 
-import pytest
 
 from apu.access_keys import simple_rotate
 

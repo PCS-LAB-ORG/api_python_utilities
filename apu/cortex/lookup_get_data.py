@@ -1,9 +1,5 @@
-import os
 import requests
 import json
-import pprint
-from pathlib import Path
-from dotenv import dotenv_values
 from requests.exceptions import HTTPError
 
 import login

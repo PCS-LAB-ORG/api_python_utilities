@@ -5,12 +5,10 @@
 
 import requests
 import json
-import pprint, sys, os
-from pathlib import Path
+import pprint
 from datetime import datetime
 
 
-from prismacloud.api import pc_api
 from apu.utils import (
     login,
     http_logging,
@@ -22,7 +20,6 @@ url = f"{login.settings["url"]}/v3/user"
 
 payload = {}
 
-from datetime import date
 
 # The API requires 13 characters in the timestamp so I add a single millisecond. The UI only shows down to the second. Rounding is assumed at this point unconfirmed.
 day = datetime(2025, 6, 7, 0, 0, 0, 1)

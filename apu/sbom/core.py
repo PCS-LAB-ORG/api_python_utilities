@@ -3,9 +3,7 @@
 
 # Prerequisite packages to run this script.
 # pip install pprintpp requests prismacloud-api
-import os
 import json
-import pprint
 import requests
 import xml.etree.ElementTree as etree
 

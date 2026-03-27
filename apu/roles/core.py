@@ -3,7 +3,6 @@
 
 # Prerequisite packages to run this script.
 # pip install pprintpp requests prismacloud-api
-import os
 import json
 from apu.utils import (
     login,

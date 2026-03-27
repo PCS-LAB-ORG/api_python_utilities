@@ -1,8 +1,3 @@
-import sys
-import os
-import requests
-import json
-import pprint
 from dotenv import dotenv_values
 from pathlib import Path
 

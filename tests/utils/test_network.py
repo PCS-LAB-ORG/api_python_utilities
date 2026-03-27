@@ -1,5 +1,5 @@
 # Using unittest.mock to raise a ConnectionError
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 import requests
 
 from apu.errors import branch_scan

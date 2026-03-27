@@ -4,9 +4,6 @@
 # pip install requests prismacloud-api
 
 import os
-import csv
-import json
-import requests
 from datetime import datetime as dt
 from apu.utils import login, files  # importing this should trigger the login procedure
 

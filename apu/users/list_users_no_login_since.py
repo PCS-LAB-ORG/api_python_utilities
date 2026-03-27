@@ -6,9 +6,6 @@ This will output a list of those users with their last login time or Never.
 """
 days_since_login = 180
 
-import requests
-import json
-import sys, os
 from datetime import datetime, timedelta
 
 from apu.utils import (

@@ -5,7 +5,6 @@
 
 import json
 import pprint
-import os, sys
 import requests
 
 from apu.utils import (

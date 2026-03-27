@@ -1,6 +1,4 @@
 import json
-import pytest
-from requests.exceptions import HTTPError
 
 from apu.utils import login, logger
 
