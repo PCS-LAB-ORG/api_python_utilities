@@ -15,7 +15,7 @@ from pathlib import Path
 
 import requests
 
-from apu.utils import logger, login
+from apu.utils import logger, login, constants
 
 logger = logger.setup_logger()
 login.login()
@@ -278,17 +278,17 @@ def parse_for_category(repo):
     }
     return key_map
 
+if __name__ == '__main__':
+    filename = constants.date_time_format_w_seconds + ".csv"
+    write_header = True
+    total_finding_count = 0
+    total_error_count = 0
+    category_started = set()
+    branch_scan()
+    logger.info(f"Total findings {total_finding_count}. Total errors {total_error_count}")
 
-filename = f"{script_dir}/findings_{formatted_starttime}.csv"
-write_header = True
-total_finding_count = 0
-total_error_count = 0
-category_started = set()
-repo_finding_list = branch_scan()
-logger.info(f"Total findings {total_finding_count}. Total errors {total_error_count}")
-
-logger.info("Keep in mind that though error files are written with entries that could not be parsed entirely " \
-            "this is also made to strip out the portions that cannot be written and to print the rest of the data " \
-            "for that entry to the regular output file for the entry's category. This duplication is a utility " \
-            "function to help find why this data may not parse correctly and distinguish it from blank data points " \
-            "that can be parsed.")
+    logger.info("Keep in mind that though error files are written with entries that could not be parsed entirely " \
+                "this is also made to strip out the portions that cannot be written and to print the rest of the data " \
+                "for that entry to the regular output file for the entry's category. This duplication is a utility " \
+                "function to help find why this data may not parse correctly and distinguish it from blank data points " \
+                "that can be parsed.")
