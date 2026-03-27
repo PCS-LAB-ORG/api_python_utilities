@@ -9,7 +9,7 @@ domain, headers = login.login()
 url = f"{domain}/public_api/v1/platform/iam/v1/user" # Intuitions
 url = f"{domain}/platform/iam/v1/user" # Documentated 
 
-response = requests.get(url, headers=login.headers)
+response = requests.get(url, headers=headers)
 try:
     response.raise_for_status()
     res_js = json.loads(response.text)

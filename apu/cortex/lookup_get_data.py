@@ -13,7 +13,7 @@ payload = {
     }
 }
 
-response = requests.post(url, json=payload, headers=login.headers)
+response = requests.post(url, json=payload, headers=headers)
 try:
     response.raise_for_status()
     res_js = json.loads(response.text)
