@@ -3,9 +3,10 @@
 # Primary API Doc link
 # https://pan.dev/prisma-cloud/api/cspm/add-user-v-3/
 
-import requests
-import sys, os
+import os
+import sys
 
+import requests
 from prismacloud.api import pc_api
 
 sys.path.append(os.path.abspath(f".."))

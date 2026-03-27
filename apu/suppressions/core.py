@@ -2,8 +2,10 @@
 
 # https://pan.dev/prisma-cloud/api/code/get-suppressions/
 
+import json
 import os
 import pprint
+
 import requests
 import json
 from apu.utils import (

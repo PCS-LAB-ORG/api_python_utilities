@@ -3,11 +3,11 @@
 # Primary API Doc link
 # https://pan.dev/prisma-cloud/api/cspm/add-user-v-3/
 
-import requests
 import json
 import pprint
 from datetime import datetime
 
+import requests
 
 from apu.utils import (
     login,

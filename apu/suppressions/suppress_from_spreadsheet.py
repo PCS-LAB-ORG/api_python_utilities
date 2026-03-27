@@ -1,12 +1,14 @@
 #!python
 
 import csv
-import pandas as pd
 from pathlib import Path
 
+import pandas as pd
+
+from apu.errors import policies, resources
 from apu.repositories import get_repo
-from apu.suppressions import core # TODO may not have to import self
-from apu.errors import resources, policies
+from apu.suppressions import core  # TODO may not have to import self
+
 
 def parse_suppression_file(file_path):
     data = []

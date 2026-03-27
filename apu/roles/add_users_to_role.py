@@ -7,7 +7,6 @@
 
 import pprint
 
-
 from prismacloud.api import pc_api
 from apu.utils import (
     login,

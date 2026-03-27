@@ -11,6 +11,7 @@ import re
 
 from apu.utils import constants
 
+
 def setup_logger(log_file_name="app.log"):
     # Define a formatter for the log messages
     formatter = logging.Formatter(

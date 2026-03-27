@@ -1,5 +1,7 @@
-from dotenv import dotenv_values
 from pathlib import Path
+
+from dotenv import dotenv_values
+
 
 def login():
     config = dotenv_values(f"{Path.home()}/.cortexcloud/lab.py")

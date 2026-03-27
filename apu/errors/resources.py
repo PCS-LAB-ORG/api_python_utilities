@@ -1,6 +1,9 @@
 import json
+
 import requests
+
 from apu.utils import login
+
 
 # This is only for branch scans not for pull request and CICD scans (checkov)
 # def get_resources_by_policies(policy_list, category_list, repo_id_list):

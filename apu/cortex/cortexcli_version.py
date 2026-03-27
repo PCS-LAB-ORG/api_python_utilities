@@ -1,8 +1,9 @@
-import requests
 import json
 import pprint
 
 import login
+import requests
+
 domain, headers = login.login()
 
 url = f"{domain}/public_api/v1/unified-cli/releases/version"

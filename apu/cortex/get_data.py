@@ -1,9 +1,10 @@
-import sys
-import requests
 import json
 import pprint
+import sys
 
 import login
+import requests
+
 domain, headers = login.login()
 
 url = f"{domain}/public_api/v1/xql/lookups/get_data"

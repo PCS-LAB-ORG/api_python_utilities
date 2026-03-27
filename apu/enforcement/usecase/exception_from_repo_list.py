@@ -2,11 +2,12 @@
 
 # Prerequisite packages to run this script.
 # pip install pprintpp requests prismacloud-api
+import argparse
+import csv
 import json
 import os
+
 import requests
-import csv
-import argparse
 from prismacloud.api import pc_api
 
 parser = argparse.ArgumentParser(

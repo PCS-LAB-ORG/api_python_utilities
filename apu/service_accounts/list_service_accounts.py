@@ -1,11 +1,12 @@
 #!/bin/bash python
 
-import requests
 import json
-import pprint, sys, os
+import os
+import pprint
+import sys
 
+import requests
 from prismacloud.api import pc_api
-
 
 sys.path.append(os.path.abspath(f".."))
 from creds_lab import PRISMA_ACCESS_KEY, PRISMA_SECRET_KEY

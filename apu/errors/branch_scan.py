@@ -10,10 +10,12 @@ import csv
 import json
 import os
 import time
-import requests
-from pathlib import Path
 from datetime import datetime as dt
-from apu.utils import login, logger
+from pathlib import Path
+
+import requests
+
+from apu.utils import logger, login
 
 logger = logger.setup_logger()
 login.login()

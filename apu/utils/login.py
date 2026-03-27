@@ -2,11 +2,11 @@
 
 # Prerequisite packages to run this script.
 # pip install pprintpp requests prismacloud-api
-import os
 import json
-import requests
+import os
 from pathlib import Path
 
+import requests
 from pcpi import session_loader
 from prismacloud.api import pc_api
 

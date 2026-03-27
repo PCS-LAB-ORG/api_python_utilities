@@ -3,8 +3,9 @@
 # Primary API Doc link
 # https://pan.dev/prisma-cloud/api/cspm/get-my-access-keys/
 
-import pprint
 import json
+import pprint
+
 import requests
 
 from apu.utils import login, http_logging # importing this should trigger the login procedure

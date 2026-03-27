@@ -1,9 +1,9 @@
 #!python
 # https://pan.dev/prisma-cloud/api/cspm/download-vulnerability-file-v-3/
 
-import requests
 import json
 
+import requests
 
 from apu.utils import (
     login,

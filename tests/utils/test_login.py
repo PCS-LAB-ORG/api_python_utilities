@@ -1,6 +1,6 @@
 import json
 
-from apu.utils import login, logger
+from apu.utils import logger, login
 
 logger = logger.setup_logger()
 

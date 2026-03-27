@@ -1,9 +1,9 @@
-import requests
 import json
 import pprint
-from requests.exceptions import HTTPError
 
 import login
+import requests
+from requests.exceptions import HTTPError
 
 domain, headers = login.login()
 url = f"{domain}/public_api/v1/policy/search"

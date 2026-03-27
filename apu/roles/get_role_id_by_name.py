@@ -1,9 +1,9 @@
 #!/bin/bash python
 
-import requests
 import json
 import pprint
 
+import requests
 
 from apu.utils import (
     login,

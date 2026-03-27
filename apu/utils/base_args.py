@@ -21,6 +21,7 @@ parser.add_argument(
 parser.add_argument("--force", required=False, default=False, help="Delete and Create key without prompting.")
 
 from datetime import datetime
+
 # Get the current date and time
 now = datetime.now()
 formatted_datetime = now.strftime("%Y_%m_%d_%H_%M_%S")

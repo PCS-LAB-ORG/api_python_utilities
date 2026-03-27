@@ -3,6 +3,7 @@
 
 from apu.access_keys import simple_rotate
 
+
 def test_simple_rotate_no_del(auth_token):
     key = {}
     simple_rotate.rotate_key(key)

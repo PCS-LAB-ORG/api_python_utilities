@@ -1,8 +1,8 @@
-import requests
 import json
 
-
 import login
+import requests
+
 domain, headers = login.login()
 url = f"{domain}/public_api/v1/xql/get_datasets"
 
