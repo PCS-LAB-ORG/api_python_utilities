@@ -1,10 +1,11 @@
 import json
 import pprint
-# import sys
 
-import login
 import requests
 from requests.exceptions import HTTPError
+
+from apu.cortex import login
+
 
 domain, headers = login.login()
 

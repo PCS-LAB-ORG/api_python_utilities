@@ -1,7 +1,7 @@
 import json
 
-import login
 import requests
+from apu.cortex import login
 
 domain, headers = login.login()
 url = f"{domain}/public_api/v1/xql/get_datasets"
