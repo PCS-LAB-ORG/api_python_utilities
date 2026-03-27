@@ -7,17 +7,16 @@ from apu.cortex import login
 
 domain, headers = login.login()
 
-url = f"{domain}/public_api/v1/case/search"
+url = f"{domain}/public_api/v1/issue/search"
 
 payload = {
     "request_data": {
-        # "filters": [{"field": "case_id", "operator": "in", "value": [0]}],
+        "filters": [{"field": "issue_id", "operator": "in", "value": [0]}],
         "search_from": 0,
         "search_to": 2,
-        "sort": {"field": "case_id", "keyword": "asc"},
+        "sort": {"field": "issue_id", "keyword": "asc"},
     }
 }
-
 
 response = requests.post(url, json=payload, headers=headers, timeout=60)
 try:
