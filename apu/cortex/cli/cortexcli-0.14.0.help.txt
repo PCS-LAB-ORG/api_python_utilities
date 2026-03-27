@@ -1,0 +1,41 @@
+
+   _____           _               _____ _      _____ 
+  / ____|         | |             / ____| |    |_   _|
+ | |     ___  _ __| |_ _____  __ | |    | |      | |  
+ | |    / _ \| '__| __/ _ \ \/ / | |    | |      | |  
+ | |___| (_) | |  | ||  __/>  <  | |____| |____ _| |_ 
+  \_____\___/|_|   \__\___/_/\_\  \_____|______|_____|
+**********************************************************
+*        By Palo Alto Networks | v0.14.0                 *
+**********************************************************
+
+Unified CLI for Workloads, APIs and Code scanning
+
+USAGE:
+  cortexcli [GLOBAL OPTIONS] <MODULE> scan [MODULES OPTIONS]
+
+Please configure your API credentials using a cortex.env config file, the --api-base-url, --api-key, and --api-key-id flags or the CORTEX_API_BASE_URL, CORTEX_API_KEY, and CORTEX_API_KEY_ID environment variables.
+
+EXAMPLES:
+  cortexcli --api-base-url <URL> --api-key <KEY> --api-key-id <ID> image scan -h
+  cortexcli --api-base-url <URL> --api-key <KEY> --api-key-id <ID> api scan -h
+  cortexcli --api-base-url <URL> --api-key <KEY> --api-key-id <ID> code scan -h
+
+MODULES:
+  code   Scans a code repository
+  image  Analyzes a container image
+  api    Perform a detailed API scan to detect vulnerabilities and compliance issues.
+
+GLOBAL OPTIONS:
+  --api-base-url value  The API base URL. Required [%CORTEX_API_BASE_URL%]
+  --api-key value       The API key used for authorization. Required [%CORTEX_API_KEY%]
+  --api-key-id value    The API key identifier associated with the API key. Required [%CORTEX_API_KEY_ID%]
+  --soft-fail           Allows the CLI to return a 0 exit code even if errors occur (default: false) [%CORTEX_SOFT_FAIL%]
+  --log-level value     The stdout log level [%LOG_LEVEL%]
+  --http-proxy value    An HTTP proxy server URL to route the traffic through [%HTTP_PROXY%]
+  --https-proxy value   An HTTPS proxy server URL to route the traffic through [%HTTPS_PROXY%]
+  --support             Upload logs to the cloud for support purposes (default: false) [%SUPPORT%]
+  --ca-certificate      CA Certificate to use [%CORTEX_CA_CERTIFICATE%]
+  --no-cert-verify      (default: False) [%CORTEX_NO_CERT_VERIFY%]
+  --help, -h            show help
+  --version, -v         print the version

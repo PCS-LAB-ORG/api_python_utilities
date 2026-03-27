@@ -12,3 +12,4 @@ dist/
 logs*
 tests/results/
 .vscode/tasks.json
+*.exe
