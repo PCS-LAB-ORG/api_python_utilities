@@ -50,3 +50,12 @@ exclude = [
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = [ "--junitxml=tests/results/report.xml", "--log-file=tests/results/test_logs.log", "--cov=tests/results/", "--alluredir=tests/results/", "-v"]
+
+[tool.pylint.messages_control]
+# Disable specific messages by their symbolic names or IDs.
+disable = [
+    "missing-module-docstring"
+]
+[tool.pylint.format]
+# Set the max line length
+max-line-length = 100
