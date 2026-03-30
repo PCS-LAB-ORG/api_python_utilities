@@ -127,50 +127,41 @@ class CortexCloudClient:
     # Operational Logic Methods
     # ==========================================
 
-    def search_cases(self, search_data: SearchRequestData):
-        """Search cases using a type-safe dataclass object."""
-        payload = {"request_data": {k: v for k, v in asdict(search_data).items() if v is not None}}
-        data = self._make_request("POST", "/public_api/v1/case/search", payload)
-        return data.get("reply")
-
-
-    def start_xql_query(self, query):
-        """
-        Start an XQL query. 
-        Returns the execution ID which can be used to retrieve results.
-        """
-        payload = {
-            "request_data": {
-                "query": query,
-                "timeframe": {"relativeTime": 86400000} # Last 24 hours
-            }
-        }
-        data = self._make_request("POST", "/public_api/v1/xql/start_xql_query", payload)
-        return data.get("reply")
-
-    def get_xql_query_results(self, query_id):
-        """Retrieve the results of an executed XQL query."""
-        payload = {
-            "request_data": {
-                "query_id": query_id,
-                "pending_flag": False,
-                "limit": 1000,
-                "format": "json"
-            }
-        }
-        data = self._make_request("POST", "/public_api/v1/xql/get_query_results", payload)
-        return data.get("reply")
 
     def get_all_assets(self):
-        """Retrieve detailed information about all assets in the environment."""
+        """
+        Retrieve detailed information about all assets in the environment.
+        Docs: https://docs-cortex.paloaltonetworks.com/r/Cortex-Cloud-Platform-APIs/Asset-inventory
+        """
         payload = {"request_data": {}}
         data = self._make_request("POST", "/public_api/v1/assets", payload)
         return data.get("reply")
 
     def get_all_endpoints(self):
-        """Retrieve a list of all endpoints managed by Cortex."""
+        """
+        Retrieve a list of all endpoints managed by Cortex.
+        Docs: https://docs-cortex.paloaltonetworks.com/r/Cortex-Cloud-Platform-APIs/Get-all-Endpoints
+        """
         payload = {"request_data": {}}
         data = self._make_request("POST", "/public_api/v1/endpoints/get_endpoints", payload)
+        return data.get("reply")
+
+    def start_xql_query(self, query_data: XqlQueryRequestData):
+        """
+        Start an XQL query using a type-safe dataclass object.
+        Docs: https://docs-cortex.paloaltonetworks.com/r/Cortex-Cloud-Platform-APIs/Start-an-XQL-query/
+        """
+        payload = {"request_data": {k: v for k, v in asdict(query_data).items() if v is not None}}
+        data = self._make_request("POST", "/public_api/v1/xql/start_xql_query", payload)
+        return data.get("reply")
+
+    def get_xql_query_results(self, results_data: XqlQueryResultsRequestData):
+        """
+        Retrieve the results of an executed XQL query.
+        Docs: https://docs-cortex.paloaltonetworks.com/r/Cortex-Cloud-Platform-APIs/Get-XQL-query-results/
+        """
+        payload = {"request_data": {k: v for k, v in asdict(results_data).items() if v is not None}}
+        data = self._make_request("POST", "/public_api/v1/xql/get_query_results", payload)
         return data.get("reply")
 
     def get_cases(self):
@@ -188,22 +179,40 @@ class CortexCloudClient:
         data = self._make_request("POST", "/public_api/v1/case/search", payload)
         return data.get("reply")
 
+    def search_cases(self, search_data: SearchRequestData):
+        """
+        Search cases using a type-safe dataclass object.
+        Docs: https://docs-cortex.paloaltonetworks.com/r/Cortex-Cloud-Platform-APIs/Retrieve-cases-based-on-filters/
+        """
+        payload = {"request_data": {k: v for k, v in asdict(search_data).items() if v is not None}}
+        data = self._make_request("POST", "/public_api/v1/case/search", payload)
+        return data.get("reply")
+
     # ==========================================
     # Platform & System APIs
     # ==========================================
 
     def get_healthcheck(self):
-        """Perform a health check of your Cortex Cloud environment."""
+        """
+        Perform a health check of your Cortex Cloud environment.
+        Docs: https://docs-cortex.paloaltonetworks.com/r/Cortex-Cloud-Platform-APIs/System-Health-Check/
+        """
         data = self._make_request("GET", "/public_api/v1/healthcheck")
         return data
 
     def get_api_keys(self, payload: dict):
-        """Get a list of API keys filtered by expiration date, role, or ID."""
+        """
+        Get a list of API keys filtered by expiration date, role, or ID.
+        Docs: https://docs-cortex.paloaltonetworks.com/r/Cortex-Cloud-Platform-APIs/Get-existing-API-keys/
+        """
         data = self._make_request("POST", "/public_api/v1/api_keys/get_api_keys", payload)
         return data.get("reply")
 
     def get_tenant_info(self, payload: dict):
-        """Get information about the Cortex Cloud tenant."""
+        """
+        Get information about the Cortex Cloud tenant.
+        Docs: https://docs-cortex.paloaltonetworks.com/r/Cortex-Cloud-Platform-APIs/Get-Tenant-Info/
+        """
         data = self._make_request("POST", "/public_api/v1/system/get_tenant_info", payload)
         return data.get("reply")
 
@@ -212,17 +221,26 @@ class CortexCloudClient:
     # ==========================================
 
     def get_assets(self, payload: dict):
-        """Retrieve detailed information about all assets within your environment."""
+        """
+        Retrieve detailed information about all assets within your environment.
+        Docs: https://docs-cortex.paloaltonetworks.com/r/Cortex-Cloud-Platform-APIs/Get-all-or-filtered-assets/
+        """
         data = self._make_request("POST", "/public_api/v1/assets", payload)
         return data.get("reply")
 
     def get_asset_by_id(self, asset_id: str):
-        """Get the details of the asset specified by asset ID."""
+        """
+        Get the details of the asset specified by asset ID.
+        Docs: https://docs-cortex.paloaltonetworks.com/r/Cortex-Cloud-Platform-APIs/Get-asset-by-ID/
+        """
         data = self._make_request("GET", f"/public_api/v1/assets/{asset_id}")
         return data.get("reply")
 
     def get_asset_groups(self, payload: dict):
-        """Get a list of asset groups based on applied filters."""
+        """
+        Get a list of asset groups based on applied filters.
+        Docs: https://docs-cortex.paloaltonetworks.com/r/Cortex-Cloud-Platform-APIs/Get-all-or-filtered-asset-groups/
+        """
         data = self._make_request("POST", "/public_api/v1/asset-groups", payload)
         return data.get("reply")
 
@@ -231,17 +249,26 @@ class CortexCloudClient:
     # ==========================================
 
     def get_endpoints(self, payload: dict):
-        """Gets a list of all of your endpoints."""
+        """
+        Gets a list of all of your endpoints.
+        Docs: https://docs-cortex.paloaltonetworks.com/r/Cortex-Cloud-Platform-APIs/Get-all-Endpoints/
+        """
         data = self._make_request("POST", "/public_api/v1/endpoints/get_endpoints", payload)
         return data.get("reply")
 
     def isolate_endpoints(self, payload: dict):
-        """Isolate one or more endpoints in a single request."""
+        """
+        Isolate one or more endpoints in a single request.
+        Docs: https://docs-cortex.paloaltonetworks.com/r/Cortex-Cloud-Platform-APIs/Isolate-Endpoints/
+        """
         data = self._make_request("POST", "/public_api/v1/endpoints/isolate", payload)
         return data.get("reply")
 
     def run_script(self, payload: dict):
-        """Execute a Python script on selected endpoints."""
+        """
+        Execute a Python script on selected endpoints.
+        Docs: https://docs-cortex.paloaltonetworks.com/r/Cortex-Cloud-Platform-APIs/Run-Script/
+        """
         data = self._make_request("POST", "/public_api/v1/scripts/run_script", payload)
         return data.get("reply")
 
@@ -250,17 +277,26 @@ class CortexCloudClient:
     # ==========================================
 
     def create_cloud_instance_template(self, payload: dict):
-        """Create a template to facilitate the seamless setup of CSP data in Cortex."""
+        """
+        Create a template to facilitate the seamless setup of CSP data in Cortex.
+        Docs: https://docs-cortex.paloaltonetworks.com/r/Cortex-Cloud-Platform-APIs/Create-a-cloud-onboarding-integration-template/
+        """
         data = self._make_request("POST", "/public_api/v1/cloud_onboarding/create_instance_template", payload)
         return data.get("reply")
 
     def get_cloud_instances(self, payload: dict):
-        """Get the configuration details of all or filtered integration instances."""
+        """
+        Get the configuration details of all or filtered integration instances.
+        Docs: https://docs-cortex.paloaltonetworks.com/r/Cortex-Cloud-Platform-APIs/Get-all-or-filtered-integration-instances/
+        """
         data = self._make_request("POST", "/public_api/v1/cloud_onboarding/get_instances", payload)
         return data.get("reply")
 
     def create_outpost_template(self, payload: dict):
-        """Create a template to onboard a custom scanning outpost."""
+        """
+        Create a template to onboard a custom scanning outpost.
+        Docs: https://docs-cortex.paloaltonetworks.com/r/Cortex-Cloud-Platform-APIs/Create-an-outpost-template/
+        """
         data = self._make_request("POST", "/public_api/v1/cloud_onboarding/create_outpost_template", payload)
         return data.get("reply")
 
@@ -268,34 +304,47 @@ class CortexCloudClient:
     # Application Security (AppSec) APIs
     # ==========================================
 
+
     def get_appsec_repositories(self, payload: dict = None):
-        """Get details on all repositories integrated with Cortex Cloud Application Security."""
-        # AppSec APIs often use GET with query parameters instead of POST with a body
+        """
+        Get details on all repositories integrated with Cortex Cloud Application Security.
+        Docs: https://docs-cortex.paloaltonetworks.com/r/Cortex-Cloud-Platform-APIs/Get-repositories/
+        """
         data = self._make_request("GET", "/public_api/appsec/v1/repositories", payload)
         return data
 
     def get_appsec_policies(self, payload: dict = None):
-        """List all or filtered Application Security policies."""
+        """
+        List all or filtered Application Security policies.
+        Docs: https://docs-cortex.paloaltonetworks.com/r/Cortex-Cloud-Platform-APIs/List-AppSec-policies/
+        """
         data = self._make_request("GET", "/public_api/appsec/v1/policies", payload)
         return data
 
     def get_appsec_scan_issues(self, scan_id: str):
-        """Get a list of the issues discovered in the specific AppSec scan."""
+        """
+        Get a list of the issues discovered in the specific AppSec scan.
+        Docs: https://docs-cortex.paloaltonetworks.com/r/Cortex-Cloud-Platform-APIs/List-AppSec-scan-issues/
+        """
         data = self._make_request("GET", f"/public_api/appsec/v1/scans/{scan_id}/issues")
         return data
 
     # ==========================================
     # Cloud Workload Protection (CWP) APIs
     # ==========================================
-
     def get_cwp_policies(self, payload: dict = None):
-        """Get all CWP policies."""
+        """
+        Get all CWP policies.
+        Docs: https://docs-cortex.paloaltonetworks.com/r/Cortex-Cloud-Platform-APIs/Get-CWP-policies/
+        """
         data = self._make_request("GET", "/public_api/v2/cwp/policies", payload)
         return data
 
     def get_asset_sbom(self, asset_id: str, format_type: str = "json", output_format: str = "CycloneDX"):
-        """Get the Software Bill of Materials (SBOM) of the specified asset."""
-        # Requires query parameters: format, output_format, attributes
+        """
+        Get the Software Bill of Materials (SBOM) of the specified asset.
+        Docs: https://docs-cortex.paloaltonetworks.com/r/Cortex-Cloud-Platform-APIs/Get-the-SBOM-of-the-specified-asset/
+        """
         endpoint = f"/public_api/v1/assets/{asset_id}/sbom?format={format_type}&output_format={output_format}"
         data = self._make_request("GET", endpoint)
         return data
@@ -305,12 +354,18 @@ class CortexCloudClient:
     # ==========================================
 
     def get_vulnerabilities(self, payload: dict):
-        """Get a list of vulnerabilities that match the filter fields."""
+        """
+        Get a list of vulnerabilities that match the filter fields.
+        Docs: https://docs-cortex.paloaltonetworks.com/r/Cortex-Cloud-Platform-APIs/Get-list-of-vulnerabilities/
+        """
         data = self._make_request("POST", "/public_api/uvem/v1/get_vulnerabilities", payload)
         return data.get("reply")
 
     def trigger_vulnerability_scan(self, payload: dict):
-        """Trigger an On-demand Scan based on AssetId."""
+        """
+        Trigger an On-demand Scan based on AssetId.
+        Docs: https://docs-cortex.paloaltonetworks.com/r/Cortex-Cloud-Platform-APIs/
+        """
         data = self._make_request("POST", "/public_api/vulnerability-management/v1/scan", payload)
         return data
 
@@ -318,13 +373,20 @@ class CortexCloudClient:
     # Compliance APIs
     # ==========================================
 
+
     def get_compliance_reports(self, payload: dict):
-        """Retrieve compliance reports."""
+        """
+        Retrieve compliance reports/assessment profile results.
+        Docs: https://docs-cortex.paloaltonetworks.com/r/Cortex-Cloud-Platform-APIs/
+        """
         data = self._make_request("POST", "/public_api/v1/compliance/get_reports", payload)
         return data.get("reply")
 
     def get_compliance_controls(self, payload: dict):
-        """Retrieve compliance control details with optional filtering."""
+        """
+        Retrieve compliance control details with optional filtering.
+        Docs: https://docs-cortex.paloaltonetworks.com/r/Cortex-Cloud-Platform-APIs/
+        """
         data = self._make_request("POST", "/public_api/v1/compliance/get_controls", payload)
         return data.get("reply")
 
