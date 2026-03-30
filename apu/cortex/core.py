@@ -1,6 +1,6 @@
 from apu.cortex import jrequest
 
-def get_alerts():
+def get_alerts(payload=None):
     url = "alerts/get_alerts"
 
     payload = {
@@ -11,10 +11,9 @@ def get_alerts():
     }
 
     response = jrequest.post(url, payload)
-    print(response)
     return response
 
-def issue_search():
+def issue_search(payload=None):
     url = "issue/search"
 
     payload = {
@@ -26,37 +25,32 @@ def issue_search():
         }
     }
     response = jrequest.post(url, payload)
-    print(response)
     return response
 
-def get_datasets():
+def get_datasets(payload=None):
     url = "xql/get_datasets"
     payload = { "request_data": {} }
     response = jrequest.post(url, payload)
-    print(response)
     return response
 
-def get_endpoints():
+def get_endpoints(payload=None):
     url = "endpoints/get_endpoints"
     payload = { "request_data": {} }
     response = jrequest.post(url, payload)
-    print(response)
     return response
 
-def get_incidents():
+def get_incidents(payload=None):
     url = "alerts/get_incidents"
     payload = { "request_data": {} }
     response = jrequest.post(url, payload)
-    print(response)
     return response
 
 def unified_cli_releases_version():
     url = "unified-cli/releases/version"
     response = jrequest.get(url)
-    print(response)
     return response
 
-def case_search():
+def case_search(payload=None):
     url = "case/search"
     payload = {
         "request_data": {
@@ -67,10 +61,9 @@ def case_search():
         }
     }
     response = jrequest.post(url, payload)
-    print(response)
     return response
 
-def xql_lookups_get_data():
+def xql_lookups_get_data(payload=None):
     url = "xql/lookups/get_data"
     dataset_name = "asdfsa" # for debugging 'a' is an existing table
     # if dataset_name and not len(sys.argv) > 1:
@@ -104,10 +97,9 @@ def xql_lookups_get_data():
     }
 
     response = jrequest.post(url, payload)
-    print(response)
     return response
 
-def incidents_extra_data():
+def incidents_extra_data(payload=None):
     url = "incidents/get_incident_extra_data"
     payload = {
         "request_data": {
@@ -116,10 +108,9 @@ def incidents_extra_data():
         }
     }
     response = jrequest.post(url, payload)
-    print(response)
     return response
 
-def asset_groups():
+def asset_groups(payload=None):
     url = "asset-groups"
     payload = {
         "request_data": {
@@ -137,5 +128,78 @@ def asset_groups():
         }
     }
     response = jrequest.post(url, payload)
-    print(response)
+    return response
+
+def get_issues(payload=None):
+    url = "issue/search"
+
+    payload = {
+        "request_data": {
+            "filters": [{"field": "issue_id", "operator": "in", "value": [0]}],
+            "search_from": 0,
+            "search_to": 2,
+            "sort": {"field": "issue_id", "keyword": "asc"},
+        }
+    }
+    response = jrequest.post(url, payload)
+    return response
+
+def get_roles(payload=None):
+    url = "rbac/get_roles"
+
+    payload = {}
+    response = jrequest.post(url, payload)
+    return response
+
+def syslog_get(payload=None):
+    url = "integrations/syslog/get"
+
+    payload = {}
+    response = jrequest.post(url, payload)
+    return response
+
+def get_user_group(payload=None):
+    url = "rbac/get_user_group"
+
+    payload = {}
+    response = jrequest.post(url, payload)
+    return response
+
+def get_users(payload=None):
+    url = "rbac/get_users"
+
+    payload = {}
+    response = jrequest.post(url, payload)
+    return response
+
+def policy_search(payload=None):
+    url = "policy/search"
+    payload = {
+        "filter": {
+            "AND": [
+                # {
+                #     "SEARCH_FIELD": "id",
+                #     "SEARCH_TYPE": "CONTAINS",
+                #     "SEARCH_VALUE": "b2b1279e-8760-44a8-8dca-bcc4508f8ce7",
+                # },
+                # {
+                #     "SEARCH_FIELD": "name",
+                #     "SEARCH_TYPE": "CONTAINS",
+                #     "SEARCH_VALUE": "Cloud Posture Security",
+                # },
+            ]
+        },
+        "search_from": 0,
+        "search_to": 500,
+        "sort": [{"FIELD": "name", "ORDER": "ASC"}],
+    } # This works as-is 3/26/2026
+    response = jrequest.post(url, payload)
+    return response
+
+def iam_user():
+    url = "platform/iam/v1/user"
+    # url = f"{domain}/public_api/v1/platform/iam/v1/user" # Intuitions
+    # url = f"{domain}/platform/iam/v1/user" # Documentated 
+
+    response = jrequest.get(url)
     return response
