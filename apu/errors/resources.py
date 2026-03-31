@@ -27,34 +27,39 @@ def get_resources_by_policies(policy_entries):
                     "filters": {
                         # "checkStatuses": ['Errors'],
                         # "codeCategories": list(category_list),
-                        "repositories": entry['repo_id_list']
+                        "repositories": entry["repo_id_list"]
                     },
-                    "codeCategory": entry['category'],
+                    "codeCategory": entry["category"],
                     "limit": limit,
                     "offset": offset,
                     "sortBy": [{"key": "Severity", "direction": "DESC"}],
                 }
             )
 
-            response = requests.request("POST", url, headers=login.headers, data=payload)
+            response = requests.request(
+                "POST", url, headers=login.headers, data=payload
+            )
             try:
                 response.raise_for_status()
                 js_res = json.loads(response.text)
-                resource_list.extend(js_res['data'])
-                resounce_length = len(js_res['data'])
-                print(f"Found {resounce_length} more resources from {entry['policy_id']} {entry['repo_id_list'][:10]}...")
+                resource_list.extend(js_res["data"])
+                resounce_length = len(js_res["data"])
+                print(
+                    f"Found {resounce_length} more resources from {entry['policy_id']} {entry['repo_id_list'][:10]}..."
+                )
                 if 0 == resounce_length:
                     has_next = False
 
                 offset += limit
-                if 'hasNext' in js_res:
-                    has_next = bool(js_res['hasNext'])
+                if "hasNext" in js_res:
+                    has_next = bool(js_res["hasNext"])
                 else:
                     has_next = False
             except Exception as e:
                 print(e)
         if 0 == resounce_length:
-            break; # continue 
+            break
+            # continue
     return resource_list
 
 
@@ -76,7 +81,7 @@ def get_resources_by_policies_checkov(policy_list, category_repo_list_map):
                 {
                     "filters": {
                         # "checkStatuses": ['Errors'],
-                    #     "codeCategories": ["ThirdPartyWeaknesses"],
+                        #     "codeCategories": ["ThirdPartyWeaknesses"],
                         "repositories": repository_list
                     },
                     "codeCategory": "Secrets",
@@ -86,15 +91,17 @@ def get_resources_by_policies_checkov(policy_list, category_repo_list_map):
                 }
             )
 
-            response = requests.request("POST", url, headers=login.headers, data=payload)
+            response = requests.request(
+                "POST", url, headers=login.headers, data=payload
+            )
             try:
                 response.raise_for_status()
                 js_res = json.loads(response.text)
-                resource_list.extend(js_res['data'])
-                
+                resource_list.extend(js_res["data"])
+
                 offset += limit
-                if 'hasNext' in js_res:
-                    has_next = bool(js_res['hasNext'])
+                if "hasNext" in js_res:
+                    has_next = bool(js_res["hasNext"])
                 else:
                     has_next = False
             except Exception as e:

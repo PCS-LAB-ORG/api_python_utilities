@@ -10,6 +10,8 @@ import os
 import requests
 from prismacloud.api import pc_api
 
+from apu.utils import login
+
 parser = argparse.ArgumentParser(
     description=r"""
 Description:
@@ -341,7 +343,9 @@ def add_rule(archived_repo_id_name, matching_name_id):
     if args.verbose:
         http_logging()
     # url = f"{login.settings['url']}/bridgecrew/api/v1/enforcement-rules"
-    response = requests.request(request_method, url, headers=login.headers, data=payload)
+    response = requests.request(
+        request_method, url, headers=login.headers, data=payload
+    )
     response.raise_for_status()
     print(f"Created/Updated Exception\n{response.text}")
 

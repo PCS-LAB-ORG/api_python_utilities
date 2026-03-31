@@ -31,11 +31,14 @@ def get_repositories(includeUnmappedProjects=False, repo_search_list=[]):
     response = requests.request("GET", url, headers=login.headers, params=params)
     response.raise_for_status()
     repository_list = json.loads(response.text)
-    
+
     repository_match_list_non_onboarded = []
-    source_id_list = [repo['Source ID'] for repo in repo_search_list]
+    source_id_list = [repo["Source ID"] for repo in repo_search_list]
     for repo in repository_list:
-        if len(source_id_list) == 0 or f"{repo['owner']}/{repo['repository']}" in source_id_list:
+        if (
+            len(source_id_list) == 0
+            or f"{repo['owner']}/{repo['repository']}" in source_id_list
+        ):
             repository_match_list_non_onboarded.append(repo)
     return repository_match_list_non_onboarded
 

@@ -5,6 +5,7 @@ import os
 from unittest.mock import patch, MagicMock
 from apu.cortex.core import CortexCloud, Sort, SearchRequestData
 
+
 @pytest.fixture
 def mock_env_vars():
     """Fixture to inject fake credentials into the environment."""
@@ -17,10 +18,12 @@ def mock_env_vars():
     del os.environ["CORTEX_API_KEY_ID"]
     del os.environ["CORTEX_API_KEY"]
 
+
 @pytest.fixture
-def client(mock_env_vars): # pytest: disable=unused-argument
+def client(mock_env_vars):  # pytest: disable=unused-argument
     """Fixture to initialize the client with the mocked environment."""
     return CortexCloud(config_file="dummy.env")
+
 
 @patch("cortex_client.requests.post")
 def test_search_cases_success(mock_post, client):
@@ -31,13 +34,15 @@ def test_search_cases_success(mock_post, client):
     mock_response.json.return_value = {
         "reply": {
             "total_count": 1,
-            "issues": [{"issue_id": "1001", "name": "Exposed S3 Bucket"}]
+            "issues": [{"issue_id": "1001", "name": "Exposed S3 Bucket"}],
         }
     }
     mock_post.return_value = mock_response
 
     # Execute the method
-    req_data = SearchRequestData(search_from=0, search_to=10, sort=Sort(field="creation_time", keyword="desc"))
+    req_data = SearchRequestData(
+        search_from=0, search_to=10, sort=Sort(field="creation_time", keyword="desc")
+    )
     result = client.search_cases(req_data)
 
     # Assertions
@@ -50,6 +55,7 @@ def test_search_cases_success(mock_post, client):
     assert called_kwargs["json"]["request_data"]["search_to"] == 10
     assert called_kwargs["json"]["request_data"]["sort"]["field"] == "creation_time"
 
+
 @patch("cortex_client.requests.post")
 def test_raise_on_error_cortex_specific(mock_post, client):
     """Test that the client catches internal Cortex JSON errors (e.g. err_code != 200)."""
@@ -60,7 +66,7 @@ def test_raise_on_error_cortex_specific(mock_post, client):
         "reply": {
             "err_code": 500,
             "err_msg": "An unexpected behavior occurred by Cortex Pubic API",
-            "err_extra": "Missing required param: `request_data`"
+            "err_extra": "Missing required param: `request_data`",
         }
     }
     mock_post.return_value = mock_response

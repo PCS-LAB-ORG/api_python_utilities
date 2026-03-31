@@ -7,7 +7,8 @@ import json
 
 import requests
 
-from apu.utils import login # importing this should trigger the login procedure
+from apu.utils import login  # importing this should trigger the login procedure
+
 
 def get_tags():
     payload = ""

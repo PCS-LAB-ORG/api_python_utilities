@@ -12,7 +12,7 @@ from gitlab.exceptions import GitlabHttpError
 from dotenv import load_dotenv
 
 # Load variables from the .env file
-dotenv_path=f"{Path.home()}/.gitlab/.env"
+dotenv_path = f"{Path.home()}/.gitlab/.env"
 load_dotenv(dotenv_path=dotenv_path)
 
 
@@ -82,9 +82,7 @@ try:
         current_page += 1
         keep_going = False
 
-    print(
-        f"Fetched page {current_page}, total projects so far: {len(all_projects)}"
-    )
+    print(f"Fetched page {current_page}, total projects so far: {len(all_projects)}")
 
     # 3. List direct members (pagination handled automatically with get_all=True)
     members = group.members.list(get_all=False)
@@ -93,15 +91,17 @@ try:
     print(f"Direct members of group '{group.name}':")
     for member in members:
         member.pprint()
-        print(f"* Name: {member.name}, Username: {member.username}, Access Level: {member.access_level}")
+        print(
+            f"* Name: {member.name}, Username: {member.username}, Access Level: {member.access_level}"
+        )
         # quit()
 
 except gitlab.exceptions.GitlabListError as e:
     print(f"Error: {e}")
 
-'''
+"""
 get all users and groups under a top level
 regex to group groups together
-update procedures for adding, moving, deleting the list of groups and users. 
+update procedures for adding, moving, deleting the list of groups and users.
 Put all this into a format that can be send to PC APIs
-'''
+"""

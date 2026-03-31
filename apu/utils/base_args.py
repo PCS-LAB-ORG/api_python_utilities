@@ -18,13 +18,23 @@ parser.add_argument(
     required=False,
     help="Will otherwise be required in local creds.py file with PRISMA_SECRET_KEY variable by command `import creds`",
 )
-parser.add_argument("--force", required=False, default=False, help="Delete and Create key without prompting.")
+parser.add_argument(
+    "--force",
+    required=False,
+    default=False,
+    help="Delete and Create key without prompting.",
+)
 
 from datetime import datetime
 
 # Get the current date and time
 now = datetime.now()
 formatted_datetime = now.strftime("%Y_%m_%d_%H_%M_%S")
-parser.add_argument("--log_file", required=False, default=f"output_{formatted_datetime}.log", help="General log file.")
+parser.add_argument(
+    "--log_file",
+    required=False,
+    default=f"output_{formatted_datetime}.log",
+    help="General log file.",
+)
 
 args = parser.parse_args()

@@ -7,7 +7,7 @@ This client provides a type-safe, environment-aware wrapper for interacting with
 Because the Cortex Cloud platform contains hundreds of APIs across Core, Application Security (AppSec), Cloud Workload Protection (CWP), and Data Security, you will likely need to add endpoints specific to your operational logic [1-3].
 
 ### Step 1: Define a Type-Safe Dataclass (Optional but Recommended)
-For endpoints requiring a complex JSON body, create a `dataclass` to ensure type safety. 
+For endpoints requiring a complex JSON body, create a `dataclass` to ensure type safety.
 ```python
 from dataclasses import dataclass, asdict
 from typing import List, Optional

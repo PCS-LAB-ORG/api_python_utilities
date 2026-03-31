@@ -11,6 +11,7 @@ from apu.users import core
 # http_logging.http_logging()
 days_since_login = 180
 
+
 # pylint: disable=redefined-outer-name
 def list(days_since_login):
     expiring_user_list = []
@@ -35,5 +36,6 @@ def list(days_since_login):
             else:
                 print(f"{user["email"]}, {user["lastLoginTs"]} UNHANDLED CASE")
     print(f"\n{len(expiring_user_list)} users that haven't logged in in 180 days")
+
 
 list(days_since_login=days_since_login)

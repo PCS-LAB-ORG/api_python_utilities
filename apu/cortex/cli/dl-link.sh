@@ -1,7 +1,7 @@
 #!/bin/bash
 # https://docs-cortex.paloaltonetworks.com/r/Cortex-XSIAM/Cortex-XSIAM-Premium-Documentation/Connect-Cortex-CLI
 
-# amd64 seems to be all that is supported as of 7/10 and I asked in chat if this is right. This script is successful but, my system is x86. 
+# amd64 seems to be all that is supported as of 7/10 and I asked in chat if this is right. This script is successful but, my system is x86.
 
 set -e
 
@@ -22,7 +22,7 @@ cortex_dw=$(curl --fail -s "$CORTEX_DOMAIN/public_api/v1/unified-cli/releases/ve
 
 echo "$cortex_dw"
 # read -r wait
-parsed=$(echo "$cortex_dw" | python -c 'import json,sys;print(json.load(sys.stdin)["signed_url"])') 
+parsed=$(echo "$cortex_dw" | python -c 'import json,sys;print(json.load(sys.stdin)["signed_url"])')
 echo "$parsed"
 curl --fail -o cortexcli "$parsed"
 echo after curl

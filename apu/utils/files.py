@@ -10,6 +10,7 @@ def list_to_csv(file_name="", data_list=[], mode="w+", encoding="utf-8"):
         csv_writer.writerows(data_list)
     print(f"Finished writing {len(data_list)} rows to {file_name}")
 
+
 def read_csv(file_name: str):
     with open(file_name) as user_list:
         return csv.DictReader(user_list)

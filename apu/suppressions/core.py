@@ -8,7 +8,8 @@ import pprint
 
 import requests
 from apu.utils import (
-    login, constants
+    login,
+    constants,
 )  # importing this should trigger the login procedure
 
 login.login(redlock=False)  # Authorization header
@@ -59,10 +60,19 @@ def create(category):
 
 
 #   create_suppression(comment, policy_id, account_id, derived_file_path_with_commit, code_lines, expiration)
-def create_suppression(comment, policyId, account_id, file_path, code_lines, expiration=-1, uuid="", category=""):
+def create_suppression(
+    comment,
+    policyId,
+    account_id,
+    file_path,
+    code_lines,
+    expiration=-1,
+    uuid="",
+    category="",
+):
     # https://pan.dev/prisma-cloud/api/code/create-suppression/
 
-    '''
+    """
     Suppression Types:
     SecretsPolicy
     PackageLicense
@@ -73,7 +83,7 @@ def create_suppression(comment, policyId, account_id, file_path, code_lines, exp
     Accounts
     Policy
     Cves
-    '''
+    """
     url = ""
     # resource uuid and policy uuid are matching and represent the finding id needed for weaknesses
     if category == "Weaknesses":
@@ -83,7 +93,7 @@ def create_suppression(comment, policyId, account_id, file_path, code_lines, exp
             "justificationComment": comment,
             "ruleType": "finding",
             "type": "PERIODIC",
-            "findingIds": [uuid]
+            "findingIds": [uuid],
         }
         # I need to check how it does this...
         if not expiration == -1:
@@ -98,9 +108,9 @@ def create_suppression(comment, policyId, account_id, file_path, code_lines, exp
             "suppressionType": "Resources",
             "resources": {
                 "accountId": account_id,
-                "id": f"{policyId}::{account_id}::{file_path}"
+                "id": f"{policyId}::{account_id}::{file_path}",
             },
-            "origin": "Platform"
+            "origin": "Platform",
         }
         if not expiration == -1:
             # Valentines Day 2026 at 12:00am PST
@@ -110,11 +120,14 @@ def create_suppression(comment, policyId, account_id, file_path, code_lines, exp
 
     response = requests.request("POST", url, headers=login.headers, data=payload)
     response.raise_for_status()
-    print(f"Suppressed: {response.text} {account_id} {policyId}::{account_id}::{file_path} {comment}")
+    print(
+        f"Suppressed: {response.text} {account_id} {policyId}::{account_id}::{file_path} {comment}"
+    )
+
 
 def delete(policy, suppression):
-    suppression_id = suppression['id']  # UUID Format
-    policy_id = policy['policyId']  # like BC_GIT_2
+    suppression_id = suppression["id"]  # UUID Format
+    policy_id = policy["policyId"]  # like BC_GIT_2
 
     url = f"{login.settings['url']}/api/v1/suppressions/{policy_id}/justifications/{suppression_id}"
     response = requests.request("DELETE", url, headers=login.headers)

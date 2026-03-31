@@ -19,7 +19,14 @@ cspm_session = {}
 session_man = {}
 headers = {}
 
-def user_pass(debug=False, redlock=None, url="https://api2.prismacloud.io/", identity="", secret=""):
+
+def user_pass(
+    debug=False,
+    redlock=None,
+    url="https://api2.prismacloud.io/",
+    identity="",
+    secret="",
+):
     # Settings for Prisma Cloud Enterprise Edition
     if not url:
         url = os.environ.get("URL")
@@ -27,11 +34,7 @@ def user_pass(debug=False, redlock=None, url="https://api2.prismacloud.io/", ide
         identity = os.environ.get("IDENTITY")
     if not secret:
         secret = os.environ.get("SECRET")
-    settings = {
-        "url": url,
-        "username": identity, # access key
-        "password": secret
-    }
+    settings = {"url": url, "username": identity, "password": secret}  # access key
 
     url = f"{url}login"
 
@@ -44,9 +47,7 @@ def user_pass(debug=False, redlock=None, url="https://api2.prismacloud.io/", ide
     payload = json.dumps(settings)
 
     global headers
-    headers = {
-        'Content-Type': 'application/json'
-    }
+    headers = {"Content-Type": "application/json"}
 
     response = requests.request("POST", url, headers=headers, data=payload)
     js_res = json.loads(response.text)
@@ -55,6 +56,7 @@ def user_pass(debug=False, redlock=None, url="https://api2.prismacloud.io/", ide
     headers.update(get_headers(redlock, js_res.token))
 
     return js_res
+
 
 def get_settings_file_name(credential_name="credentials"):
     return f"{Path.home()}/.prismacloud/{credential_name}.json"
@@ -74,8 +76,8 @@ def common_settings_file(credential_name="credentials"):
         logger.warning(e)
         logger.info("Using environment variables")
         DOMAIN = os.environ.get("URL", default="<URL not found>")
-        PRISMA_ACCESS_KEY = os.environ.get("IDENTITY",  default="<IDENTITY not found>")
-        PRISMA_SECRET_KEY = os.environ.get("SECRET",  default="<SECRET not found>")
+        PRISMA_ACCESS_KEY = os.environ.get("IDENTITY", default="<IDENTITY not found>")
+        PRISMA_SECRET_KEY = os.environ.get("SECRET", default="<SECRET not found>")
         return {
             "url": DOMAIN,
             "identity": PRISMA_ACCESS_KEY,
@@ -83,22 +85,42 @@ def common_settings_file(credential_name="credentials"):
         }
     return settings
 
+
 # TODO write in the login function to take the access/secret/url and cycle through login options.
 
-def login(debug=False, redlock=None, credential_name="credentials", lib="pc_api", access_key=None, secret_key=None, url=None):
-    ''' what priority order do I want to assume here? '''
-    '''
-    Anything passed comes first. 
+
+def login(
+    debug=False,
+    redlock=None,
+    credential_name="credentials",
+    lib="pc_api",
+    access_key=None,
+    secret_key=None,
+    url=None,
+):
+    """what priority order do I want to assume here?"""
+    """
+    Anything passed comes first.
     More local gets priority.
     Do we allow dieriving partial info when passed to the function?
-        
-    '''
+
+    """
     if access_key and secret_key and url:
-        return user_pass(debug=debug, redlock=redlock, url=url, identity=access_key, secret=secret_key)
+        return user_pass(
+            debug=debug,
+            redlock=redlock,
+            url=url,
+            identity=access_key,
+            secret=secret_key,
+        )
     elif lib == "pc_api":
         if not credential_name:
-            logger.debug("Credential file not given so using environment variables. Only prismacloud-api is supported.")
-        return login_pc_api(debug=debug, redlock=redlock, credential_name=credential_name)
+            logger.debug(
+                "Credential file not given so using environment variables. Only prismacloud-api is supported."
+            )
+        return login_pc_api(
+            debug=debug, redlock=redlock, credential_name=credential_name
+        )
     elif lib == "pcpi":
         return login_pcpi(redlock=redlock, credential_name=credential_name)
     else:
@@ -110,12 +132,15 @@ def login_pc_api(debug=False, redlock=None, credential_name="credentials"):
     settings = common_settings_file(credential_name=credential_name)
     pc_api.configure(settings=settings)
     if None is pc_api.token:
-        raise FileNotFoundError("Authentication with prismacloud.api env vars URL, IDENTITY, and SECRET failed.")
+        raise FileNotFoundError(
+            "Authentication with prismacloud.api env vars URL, IDENTITY, and SECRET failed."
+        )
     pc_api.debug = debug
 
     global headers
     headers = get_headers(redlock, pc_api.token)
     return pc_api
+
 
 def login_pcpi(redlock=None, logger=None, credential_name="credentials"):
     settings = get_settings_file_name(credential_name=credential_name)
@@ -123,9 +148,7 @@ def login_pcpi(redlock=None, logger=None, credential_name="credentials"):
     if not logger:
         session_managers = session_loader.load_config(file_path=settings)
     else:
-        session_managers = session_loader.load_config(
-            file_path=settings, logger=logger
-        )
+        session_managers = session_loader.load_config(file_path=settings, logger=logger)
     global session_man
     session_man = session_managers[0]
     global cspm_session

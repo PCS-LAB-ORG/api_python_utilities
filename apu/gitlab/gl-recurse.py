@@ -6,7 +6,7 @@ import gitlab
 from dotenv import load_dotenv
 
 # Load variables from the .env file in C:/Users/<username>/.gitlab/.env
-dotenv_path=f"{Path.home()}/.gitlab/.env"
+dotenv_path = f"{Path.home()}/.gitlab/.env"
 load_dotenv(dotenv_path=dotenv_path)
 
 
@@ -16,8 +16,8 @@ GITLAB_URL = os.environ.get("GITLAB_URL")
 # Replace with your Personal Access Token
 PRIVATE_TOKEN = os.environ.get("PRIVATE_TOKEN")
 
-script_path = os.path.abspath(__file__) # path to this script
-script_dir = os.path.dirname(script_path) # directory of this script
+script_path = os.path.abspath(__file__)  # path to this script
+script_dir = os.path.dirname(script_path)  # directory of this script
 
 output_file = f"{script_dir}/output.csv"
 BASE_GROUP_ID = "miles-cortex-demos"
@@ -30,6 +30,8 @@ gl = gitlab.Gitlab(GITLAB_URL, PRIVATE_TOKEN, ssl_verify=False)
 
 # all_projects = []
 all_members = []
+
+
 def get_projects_recursive(group_id):
     # current_page = 1
     # keep_going = True
@@ -46,16 +48,18 @@ def get_projects_recursive(group_id):
         # )
         # all_projects.extend(projects)
         for member in group.members.list(all=True):
-            all_members.append({
-                "group_url": group.web_url,
-                "username": member.username,
-                "name": member.name,
-                "locked": member.locked,
-                "state": member.state,
-                "group": group.full_name,
-                "group_archived": group.archived,
-                "group_id": member.group_id,
-            })
+            all_members.append(
+                {
+                    "group_url": group.web_url,
+                    "username": member.username,
+                    "name": member.name,
+                    "locked": member.locked,
+                    "state": member.state,
+                    "group": group.full_name,
+                    "group_archived": group.archived,
+                    "group_id": member.group_id,
+                }
+            )
 
         # 2. Get subgroups of this group and recurse
         subgroups = group.subgroups.list(all=True)
@@ -74,6 +78,7 @@ def get_projects_recursive(group_id):
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
 
+
 # Start the recursion from the base group
 get_projects_recursive(BASE_GROUP_ID)
 
@@ -81,7 +86,7 @@ for member in all_members:
     print(f"- {member}")
 
 # Open a new CSV file for writing
-with open(f"{script_dir}/output.csv", 'w', newline='', encoding='utf-8') as csvfile:
+with open(f"{script_dir}/output.csv", "w", newline="", encoding="utf-8") as csvfile:
     # Extract the headers (keys) from the first dictionary
     fieldnames = all_members[0].keys()
 

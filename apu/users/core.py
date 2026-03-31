@@ -6,6 +6,7 @@ from prismacloud.api import pc_api
 from apu.utils import files, login
 from apu.utils import core
 
+
 def get():
     # Get user list
     url = f"{login.settings['url']}/v3/user"
@@ -19,28 +20,41 @@ def get():
     user_list = json.loads(response.text)
     return user_list
 
-def create(user={}, accessKeysAllowed=True, activeRole={}, defaultRoleId=None, email=None, firstName=None, lastName=None, roleIds=None, timeZone=None):
-    ''' https://pan.dev/prisma-cloud/api/cspm/add-user-v-2/ '''
+
+def create(
+    user={},
+    accessKeysAllowed=True,
+    activeRole={},
+    defaultRoleId=None,
+    email=None,
+    firstName=None,
+    lastName=None,
+    roleIds=None,
+    timeZone=None,
+):
+    """https://pan.dev/prisma-cloud/api/cspm/add-user-v-2/"""
     # Expected format. See API def in pan.dev
     user_attr = {
-            "accessKeysAllowed": bool(accessKeysAllowed),
-            "activeRole": activeRole,
-            "defaultRoleId": defaultRoleId,
-            "email": email,
-            "firstName": firstName,
-            "lastName": lastName,
-            "roleIds": roleIds.replace(" ", ", "),
-            "timeZone": timeZone,
-        }
+        "accessKeysAllowed": bool(accessKeysAllowed),
+        "activeRole": activeRole,
+        "defaultRoleId": defaultRoleId,
+        "email": email,
+        "firstName": firstName,
+        "lastName": lastName,
+        "roleIds": roleIds.replace(" ", ", "),
+        "timeZone": timeZone,
+    }
     user.update(user_attr)
     payload = json.dumps(user)
     res = pc_api.user_create(payload)
     print(f"Create User ({user["email"]}) response code: {res}")
     return res
 
+
 def create_from_user_csv(file_name):
     for user in files.read_csv(file_name):
         core.create_user(user)
+
 
 def enable_disable_user(username, enable=True):
     """

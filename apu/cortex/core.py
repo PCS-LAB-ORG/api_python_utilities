@@ -49,7 +49,7 @@ class XqlQueryResultsRequestData:
 class CortexCloud:
 
     def __init__(self, config_file="cortex.env")
-        self.client = CortexCloudClient(self, config_file)    
+        self.client = CortexCloudClient(self, config_file)
 
     # ==========================================
     # Operational Logic Methods

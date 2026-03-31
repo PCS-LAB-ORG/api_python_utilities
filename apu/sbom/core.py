@@ -14,16 +14,13 @@ from apu.utils import (
 
 # http_logging.http_logging()
 
+
 def dependencies(filters=None):
     if not filters:
-        filters = {
-            "filters": {
-                "severity": ["low", "medium", "high", "critical"]
-            }
-        }
+        filters = {"filters": {"severity": ["low", "medium", "high", "critical"]}}
         only_vulnerable = False
         if only_vulnerable:
-            filters['filters']['severity'] = ["low", "medium", "high", "critical"]
+            filters["filters"]["severity"] = ["low", "medium", "high", "critical"]
     payload = json.dumps(filters)
 
     limit = 50
@@ -46,6 +43,7 @@ def dependencies(filters=None):
             # break
     print(f"Found {len(dependencies)} dependencies")
     return dependencies
+
 
 def sbom():
 
@@ -75,12 +73,15 @@ def sbom():
             etree.indent(root)
             file.writelines(etree.tostring(root, encoding="unicode"))
 
+
 def get_filters():
 
     url = f"{login.cspm_session.api_url}/bridgecrew/api/v1/sbom/filters"
 
     payload = {}
-    response = requests.request("GET", url, headers=login.headers, data=payload, allow_redirects=True)
+    response = requests.request(
+        "GET", url, headers=login.headers, data=payload, allow_redirects=True
+    )
     response.raise_for_status()
     filters = json.loads(response.text)
     return filters

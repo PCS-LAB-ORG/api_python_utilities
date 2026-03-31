@@ -1,4 +1,3 @@
-
 import requests
 from apu.cortex.login import CortexAuthManager
 
@@ -6,6 +5,7 @@ from apu.cortex.login import CortexAuthManager
 # ==========================================
 # Request Manager & Operational Client
 # ==========================================
+
 
 class CortexCloudClient:
     def __init__(self, config_file="cortex.env"):
@@ -15,7 +15,7 @@ class CortexCloudClient:
     def raise_on_error(self, response):
         """Evaluate HTTP status codes and Cortex-specific JSON error payloads."""
         response.raise_for_status()
-        
+
         try:
             data = response.json()
         except ValueError:
@@ -27,8 +27,12 @@ class CortexCloudClient:
             err_code = error_container["err_code"]
             if err_code not in (0, 200):
                 err_msg = error_container.get("err_msg", "Unknown error")
-                err_extra = error_container.get("err_extra", "No extra details provided")
-                raise Exception(f"Cortex API Error [{err_code}]: {err_msg} - Details: {err_extra}")
+                err_extra = error_container.get(
+                    "err_extra", "No extra details provided"
+                )
+                raise Exception(
+                    f"Cortex API Error [{err_code}]: {err_msg} - Details: {err_extra}"
+                )
 
         return data
 
@@ -36,7 +40,7 @@ class CortexCloudClient:
         """Execute the API call using headers from the Auth Manager and run error checks."""
         url = f"{self.auth.base_url}{endpoint}"
         headers = self.auth.get_auth_headers()
-        
+
         if method.upper() == "POST":
             response = requests.post(url, json=payload, headers=headers)
         elif method.upper() == "GET":
@@ -45,7 +49,6 @@ class CortexCloudClient:
             raise ValueError(f"Unsupported HTTP method: {method}")
 
         return self.raise_on_error(response)
-
 
 
 # import json

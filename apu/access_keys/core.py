@@ -10,7 +10,8 @@ import requests
 
 from prismacloud.api import pc_api
 
-from apu.utils import login # importing this should trigger the login procedure
+from apu.utils import login  # importing this should trigger the login procedure
+
 
 def get():
     # pc_api.access_keys_list_read()
@@ -19,6 +20,7 @@ def get():
     response = requests.request("GET", url, headers=login.headers, data=payload)
     response.raise_for_status()
     return json.loads(response.text)
+
 
 def delete(key=None, key_id=None):
     # pc_api.access_key_delete()
@@ -31,10 +33,16 @@ def delete(key=None, key_id=None):
     response.raise_for_status()
     print(f"{response.status_code} {response.text}")
 
-def add(key=None, days_till_expiration=90, key_name="My Prisma Key", key_output_file_name="access_key.json"):
+
+def add(
+    key=None,
+    days_till_expiration=90,
+    key_name="My Prisma Key",
+    key_output_file_name="access_key.json",
+):
     url = f"{login.settings['url']}/access_keys"
     if key:
-        key_name = key['name']
+        key_name = key["name"]
 
     sats = days_to_timestamp(days_till_expiration)
     payload = json.dumps({"expiresOn": sats, "name": key_name})
@@ -45,6 +53,7 @@ def add(key=None, days_till_expiration=90, key_name="My Prisma Key", key_output_
     # pprint.pprint(js_res)
     with open(key_output_file_name, "w") as output:
         output.writelines(js_res)
+
 
 def days_to_timestamp(days):
     # 1753206001977 epoch
@@ -68,9 +77,11 @@ def days_to_timestamp(days):
     sats = str(timestamp_float).replace(".", "")[:13]  # Get first 13 characters
     return sats
 
+
 def is_expired(key=None, key_id=None):
     key = key_or_id(key, key_id)
-    return key['status'] == "expired"
+    return key["status"] == "expired"
+
 
 def key_or_id(key=None, key_id=None):
     if key:
@@ -79,6 +90,7 @@ def key_or_id(key=None, key_id=None):
         return pc_api.access_key_read(key_id)
     else:
         raise TypeError("key not found")
+
 
 if __name__ == "__main__":
     login.login()

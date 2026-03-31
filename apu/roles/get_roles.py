@@ -3,7 +3,7 @@
 
 from apu.utils import (
     constants,
-    files
+    files,
 )  # importing this should trigger the login procedure
 from apu.roles import core
 

@@ -53,7 +53,7 @@ def rotate_key(key, allow_delete=False, delete_if_expired=False):
 """
 Users and service accounts can have 0, 1, or 2 access keys.
 If there are already 2 then one must be deleted before creating another.
-The assumption in this scrcipt is that if you 'allow_delete' the key you are trying to rotate has expired and should be deleted. 
+The assumption in this scrcipt is that if you 'allow_delete' the key you are trying to rotate has expired and should be deleted.
 Else it will raise an error suggesting direction on what key to delete.
 I could add logic to check the expiration of the key but, this does not imply the intentions of the user
 """

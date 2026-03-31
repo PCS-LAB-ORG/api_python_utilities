@@ -17,7 +17,7 @@ def parse_suppression_file(file_path=""):
         data = df.to_dict(orient="records")
 
     elif file_path.endswith(".csv"):
-        with open(file_path, mode="r", encoding="utf-8") as file:
+        with open(file_path, encoding="utf-8") as file:
             csv_reader = csv.DictReader(file)
             for row in csv_reader:
                 data.append(row)
@@ -81,7 +81,9 @@ def parse_suppression_file(file_path=""):
             # if row['Custom Policy'] == "Yes":
             #     request_suppress.append(row)
             # suppress = True
-        print(f"{row['Source ID']}, Request Suppress: {needs_suppressed}, Status: {row['Status']}.. Will Suppress: {suppress}")
+        print(
+            f"{row['Source ID']}, Request Suppress: {needs_suppressed}, Status: {row['Status']}.. Will Suppress: {suppress}"
+        )
     data = request_suppress
 
     if 0 == len(data):
@@ -119,9 +121,13 @@ def finding_code_line_to_policy_finding(finding, policy_list):
     derived_file_path_with_commit = ""
     code_lines = ""
     if "," in finding["Code issue line"]:
-        code_lines = finding["Code issue line"].split(", ") # '34, 35' is the variable's format
+        code_lines = finding["Code issue line"].split(
+            ", "
+        )  # '34, 35' is the variable's format
     if "-" in finding["Code issue line"]:
-        code_lines = finding["Code issue line"].split("-") # '34, 35' is the variable's format
+        code_lines = finding["Code issue line"].split(
+            "-"
+        )  # '34, 35' is the variable's format
 
     for policy in policy_list:
         # print(f"{policy['repository']} {policy['errorLines']} {policy['resourceId']} {policy['violationId']}")
@@ -143,7 +149,9 @@ def finding_code_line_to_policy_finding(finding, policy_list):
             and str(policy["errorLines"][1]) in code_lines
         ):
             # error_lines_from_resource = resource_list['data']['errorLines'] # [79, 80]
-            derived_file_path_with_commit = policy["resourceId"]  # file path with leading slash and commit sha # 'commitHash' = 'd2a1546df'
+            derived_file_path_with_commit = policy[
+                "resourceId"
+            ]  # file path with leading slash and commit sha # 'commitHash' = 'd2a1546df'
             break
 
         # for weaknesses
@@ -152,7 +160,9 @@ def finding_code_line_to_policy_finding(finding, policy_list):
                 start = str(location["start"]["row"])
                 end = str(location["end"]["row"])
                 if start in code_lines and end in code_lines:
-                    derived_file_path_with_commit = policy["filePath"]  # file path with leading slash and commit sha
+                    derived_file_path_with_commit = policy[
+                        "filePath"
+                    ]  # file path with leading slash and commit sha
                     if "commitHash" in policy:
                         derived_file_path_with_commit += f":{policy['commitHash']}"
                     break
@@ -177,7 +187,7 @@ def suppress(file_path=""):
         repo_owner_name_map[f"{repo['owner']}/{repo['repository']}"] = repo
         repo_id_list.append(repo["id"])
 
-    category_list = set([finding["Code category"] for finding in data])
+    category_list = {finding["Code category"] for finding in data}
     # category_repo_list_map = {}
     # for d in data:
     #     for repo in repo_list:
@@ -253,17 +263,23 @@ def suppress(file_path=""):
             not finding["Policy reference"] == "-"
             and finding["Policy reference"] in policies_by_guide
         ):
-            policy_id_by_guide = policies_by_guide[finding["Policy reference"]]["policyId"]
+            policy_id_by_guide = policies_by_guide[finding["Policy reference"]][
+                "policyId"
+            ]
             uuid = policies_by_guide[finding["Policy reference"]].get("uuid")
 
-        if not policy_id_by_guide == policy_id and not 0 == len(policy_id_by_guide):  # I dont think there can be a policy reference for custom policies. If this is untrue then use the title match as the definitive check.
+        if not policy_id_by_guide == policy_id and not 0 == len(
+            policy_id_by_guide
+        ):  # I dont think there can be a policy reference for custom policies. If this is untrue then use the title match as the definitive check.
             print(f"Error: {finding}")
             # I found this logic really challenging to determine. Can the policy names be the same?
             continue
 
         account_id = finding["Source ID"]  # "jumiles-pa/test-cas-app"
         file_path = f"/{finding["Code path"]}"  # "/README.md"
-        derived_file_path_with_commit, code_lines = finding_code_line_to_policy_finding(finding, policy_list)
+        derived_file_path_with_commit, code_lines = finding_code_line_to_policy_finding(
+            finding, policy_list
+        )
         expiration = get_expiration(finding)
 
         quit("Not ready for testing")
@@ -320,7 +336,7 @@ curl 'https://api2.prismacloud.io/bridgecrew/api/v2/suppression' \
                         "a9042bd0-cdf9-4f07-803e-19d340bbc48c"
                     ]
                 }'
-  
+
   {"message":"Internal Server Error"}
 
 

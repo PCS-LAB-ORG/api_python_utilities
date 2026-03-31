@@ -7,7 +7,8 @@ import json
 import requests
 from prismacloud.api import pc_api
 
-from apu.utils import login # importing this should trigger the login procedure
+from apu.utils import login  # importing this should trigger the login procedure
+
 
 def list(role=None):
     url = f"{login.settings['url']}/user/role"
@@ -22,6 +23,7 @@ def list(role=None):
             if role.get("name") == r.get("name"):
                 return r
     # files.list_to_csv(file_name, json_role)
+
 
 def update_user(user, user_dict=None):
     if user_dict:
