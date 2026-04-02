@@ -78,7 +78,7 @@ disable = [
 max-line-length = 500
 
 [tool.black]
-preview = True
+preview = true
 
 [tool.isort]
 profile = "black"

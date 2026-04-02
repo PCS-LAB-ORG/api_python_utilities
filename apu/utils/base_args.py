@@ -1,6 +1,7 @@
 #!python
 
 import argparse
+from datetime import datetime
 
 parser = argparse.ArgumentParser(description="Core Prisma Parameters")
 parser.add_argument(
@@ -25,7 +26,6 @@ parser.add_argument(
     help="Delete and Create key without prompting.",
 )
 
-from datetime import datetime
 
 # Get the current date and time
 now = datetime.now()

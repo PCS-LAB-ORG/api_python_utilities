@@ -1,15 +1,28 @@
-#!python
+"""
+Usage: projects.py [options]
+
+Options:
+  -v, --verbose  Verbose mode.
+"""
 
 # pip install python-gitlab
 
 import os
 
-import pprint
 from pathlib import Path
+import sys
+
+from docopt import docopt
 import gitlab
 from gitlab.exceptions import GitlabHttpError
+import urllib3
 
 from dotenv import load_dotenv
+
+arguments = docopt(__doc__)
+
+if arguments["v"]:
+    urllib3.disable_warnings()
 
 # Load variables from the .env file
 dotenv_path = f"{Path.home()}/.gitlab/.env"
@@ -26,6 +39,8 @@ PRIVATE_TOKEN = os.environ.get("PRIVATE_TOKEN")
 try:
     gl = gitlab.Gitlab(GITLAB_URL, private_token=PRIVATE_TOKEN, ssl_verify=False)
     gl.auth()
+    if arguments["v"]:
+        gl.enable_debug()
     print(f"Successfully connected to GitLab at {GITLAB_URL}")
 except Exception as e:
     print(f"Error connecting to GitLab: {e}")
@@ -36,9 +51,9 @@ try:
     # group = gl.groups.get("gitlab-org")
     group_name = "miles-cortex-demos"
     group = gl.groups.get(group_name)
-except GitlabHttpError:
+except GitlabHttpError as e:
     print(f"Group {group_name} not found.")
-    exit()
+    raise e
 
 # List all direct subgroups
 subgroups = group.subgroups.list(get_all=False)

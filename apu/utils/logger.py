@@ -9,8 +9,6 @@ upon as needed.
 import logging
 import re
 
-from apu.utils import constants
-
 
 def setup_logger(log_file_name="app.log"):
     # Define a formatter for the log messages
@@ -53,6 +51,3 @@ class MaskSensitiveDataFilter(logging.Filter):
         record.msg = masked_message
         record.args = ()
         return True
-
-
-logger = setup_logger(constants.log_dir)

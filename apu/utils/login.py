@@ -1,19 +1,38 @@
 #!/bin/bash python
 
+"""Prisma Cloud API CLI.
+
+Usage:
+  prismacli get-alerts --api-url=<url> --access-key=<key> --secret-key=<secret> [--limit=<limit>]
+  prismacli get-assets --api-url=<url> --access-key=<key> --secret-key=<secret> [--status=<status>]
+  prismacli (-h | --help)
+  prismacli --version
+
+Options:
+  -h --help             Show this help screen.
+  --version             Show the version of the CLI.
+  --api-url=<url>       The base Prisma Cloud API URL (e.g., https://api.prismacloud.io).
+  --access-key=<key>    Your Prisma Cloud Access Key ID.
+  --secret-key=<secret> Your Prisma Cloud Secret Key.
+  --limit=<limit>       Maximum number of results to return [default: 100].
+  --status=<status>     Filter assets by status.
+"""
+
 # Prerequisite packages to run this script.
 # pip install pprintpp requests prismacloud-api
 import json
 import os
 from pathlib import Path
+import logging
 
 import requests
 
 from pcpi import session_loader
 from prismacloud.api import pc_api
 
-from apu.utils import logger
+logging.basicConfig(level=logging.INFO, format="%(name)s - %(levelname)s - %(message)s")
+logger = logging.getLogger(__name__)
 
-logger = logger.logger
 settings = {}
 cspm_session = {}
 session_man = {}
