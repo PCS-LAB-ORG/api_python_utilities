@@ -76,3 +76,10 @@ disable = [
 [tool.pylint.format]
 # Set the max line length
 max-line-length = 500
+
+[tool.black]
+preview = True
+
+[tool.isort]
+profile = "black"
+# ignore = E203,E701
