@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "apu"
-version = "0.1.2"
+version = "0.1.3"
 authors = [
     { name="Justin Miles", email="jumiles@paloaltonetworks.com" },
 ]
@@ -77,6 +77,10 @@ disable = [
 # Set the max line length
 max-line-length = 500
 
+[tool.pylint.messages_control]
+# Disable Pylint rules that conflict with Black or Mypy
+disable = ["C0330", "C0326"] 
+
 [tool.black]
 preview = true
 
@@ -88,5 +92,4 @@ profile = "black"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
-
 plugins = ["pydantic.mypy"]
