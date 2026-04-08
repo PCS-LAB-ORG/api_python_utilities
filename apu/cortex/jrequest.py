@@ -18,8 +18,9 @@ class CortexCloudClient:
 
         try:
             data = response.json()
-        except ValueError:
-            raise Exception(f"Failed to parse JSON response: {response.text}")
+        except ValueError as e:
+            print(f"Failed to parse JSON response: {response.text}", e)
+            raise e
 
         # Extract internal application errors often wrapped in 'reply'
         error_container = data.get("reply", data)
@@ -36,7 +37,7 @@ class CortexCloudClient:
 
         return data
 
-    def _make_request(self, method, endpoint, payload=None):
+    def make_request(self, method, endpoint, payload=None):
         """Execute the API call using headers from the Auth Manager and run error checks."""
         url = f"{self.auth.base_url}{endpoint}"
         headers = self.auth.get_auth_headers()
