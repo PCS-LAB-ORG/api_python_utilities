@@ -24,7 +24,7 @@ def get_vcs_repository_page(data=""):
     return repository_list
 
 
-def get_repositories(includeUnmappedProjects=False, repo_search_list=[]):
+def get_repositories(includeUnmappedProjects=False, repo_search_list=None):
     params = {"includeUnmappedProjects": includeUnmappedProjects}
     url = f"{login.settings['url']}/code/api/v1/repositories"
     response = requests.request("GET", url, headers=login.headers, params=params)
