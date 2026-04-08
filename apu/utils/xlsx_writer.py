@@ -11,9 +11,11 @@ Options:
 
 """
 
+# https://robpol86.github.io/docoptcfg/env_vars.html
+# https://github.com/abingham/docopt-subcommands
 import csv
-import xlsxwriter
-from docopt import docopt
+import xlsxwriter  # type ignore[untyped-import]
+from docopt import docopt  # type ignore[untyped-import]
 
 
 def csv_to_xlsx(input_file: str) -> xlsxwriter.Workbook:
