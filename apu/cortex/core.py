@@ -267,7 +267,7 @@ class CortexCloud:
     # Application Security (AppSec) APIs
     # ==========================================
 
-    def get_appsec_repositories(self, payload: dict = None):
+    def get_appsec_repositories(self, payload: dict[str, str]):
         """
         Get details on all repositories integrated with Cortex Cloud Application Security.
         Docs: https://docs-cortex.paloaltonetworks.com/r/Cortex-Cloud-Platform-APIs/Get-repositories/
@@ -277,7 +277,7 @@ class CortexCloud:
         )
         return data
 
-    def get_appsec_policies(self, payload: dict = None):
+    def get_appsec_policies(self, payload: dict[str, str]):
         """
         List all or filtered Application Security policies.
         Docs: https://docs-cortex.paloaltonetworks.com/r/Cortex-Cloud-Platform-APIs/List-AppSec-policies/
@@ -300,7 +300,7 @@ class CortexCloud:
     # ==========================================
     # Cloud Workload Protection (CWP) APIs
     # ==========================================
-    def get_cwp_policies(self, payload: dict = None):
+    def get_cwp_policies(self, payload: dict[str, str]):
         """
         Get all CWP policies.
         Docs: https://docs-cortex.paloaltonetworks.com/r/Cortex-Cloud-Platform-APIs/Get-CWP-policies/

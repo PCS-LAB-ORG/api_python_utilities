@@ -10,7 +10,6 @@ Options:
 import os
 
 from pathlib import Path
-import sys
 
 from docopt import docopt
 import gitlab

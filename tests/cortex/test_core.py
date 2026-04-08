@@ -1,9 +1,11 @@
 # This test module uses `unittest.mock` to intercept the `requests` calls, allowing you to validate the client's payload generation and error-handling logic without requiring a live Cortex Cloud tenant or exposing real API keys.
 
-import pytest
 import os
-from unittest.mock import patch, MagicMock
-from apu.cortex.core import CortexCloud, Sort, SearchRequestData
+from unittest.mock import MagicMock, patch
+
+import pytest
+
+from apu.cortex.core import CortexCloud, SearchRequestData, Sort
 
 
 @pytest.fixture
@@ -20,7 +22,7 @@ def mock_env_vars():
 
 
 @pytest.fixture
-def client(mock_env_vars):  # pytest: disable=unused-argument
+def client(mock_env_vars):
     """Fixture to initialize the client with the mocked environment."""
     return CortexCloud(config_file="dummy.env")
 
