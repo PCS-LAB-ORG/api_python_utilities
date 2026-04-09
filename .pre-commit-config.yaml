@@ -28,7 +28,7 @@ repos:
       - id: checkov # Alternatively, use checkov_container for an image based scan
         args: [--skip-results-upload, --repo-id, pcs-lab-org/api_python_utilities, --use-enforcement-rules]
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.0.1
+    rev: v0.15.10
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
