@@ -54,8 +54,11 @@ testpaths = ["tests"]
 addopts = [ "--junitxml=tests/results/report.xml", "--log-file=tests/results/test_logs.log", "-v"]
 
 [tool.pylint.messages_control]
+# Disable Pylint rules that conflict with Black or Mypy
 # Disable specific messages by their symbolic names or IDs.
 disable = [
+    "C0330",
+    "C0326",
     "missing-module-docstring",
     "unspecified-encoding",
     "missing-timeout",
@@ -76,10 +79,6 @@ disable = [
 [tool.pylint.format]
 # Set the max line length
 max-line-length = 500
-
-[tool.pylint.messages_control]
-# Disable Pylint rules that conflict with Black or Mypy
-disable = ["C0330", "C0326"] 
 
 [tool.black]
 preview = true
