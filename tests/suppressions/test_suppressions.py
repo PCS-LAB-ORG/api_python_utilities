@@ -12,6 +12,6 @@ def test_get(auth_token):
         suppression_list = core.get()
         for suppression in suppression_list:
             print(
-                f"{suppression["suppressionType"]} {suppression["policyId"]} {suppression["comment"]}"
+                f"{suppression['suppressionType']} {suppression['policyId']} {suppression['comment']}"
             )
         assert not len(suppression_list) == 0

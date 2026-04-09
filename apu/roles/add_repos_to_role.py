@@ -8,6 +8,10 @@
 import csv
 from datetime import datetime
 
+from prismacloud.api import pc_api
+
+from apu.utils import login
+
 now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 
@@ -16,14 +20,17 @@ current_role_list = None
 
 
 def read_repo_list_file(list_of_repos_file_name):
+    file_contents = None
     with open(list_of_repos_file_name, "r+") as file:
-        input_file = file.readlines()  # Print the line without adding an extra newline
+        file_contents = (
+            file.readlines()
+        )  # Print the line without adding an extra newline
     return file_contents
 
 
 def get_repo_hash(file_contents):
     repo_hash = dict()
-    for requested_repo in input_file:
+    for requested_repo in file_contents:
         repo_hash[requested_repo.strip()] = ""
     return repo_hash
 
@@ -67,11 +74,9 @@ def get_role_by_name(user_role_name):
             \nThis is not the backup file the script is restoring to... Use this to roll back if there are errors or mistakes. \
             \nThis script is not written to update other attributes of the roles than description and repositories. "
         )
-    found = "Role not found"
     found_role = {}
     for role in current_role_list:
         if role["id"] == user_role_name:
-            found = role["id"]
             print(f"Found role: {role['name']}")
             found_role = role
             break
@@ -140,10 +145,10 @@ def update_role(user_role_name, list_of_repo_names):
 
         # Final state of the role
         updated_role = pc_api.user_role_read(role["id"])
-        print(f"Updated {updated_role["name"]}:{updated_role["id"]}")
+        print(f"Updated {updated_role['name']}:{updated_role['id']}")
     else:
         print(
-            f"No changes in the backup state for role '{role['name']}:{role["id"]}'. Skipping..."
+            f"No changes in the backup state for role '{role['name']}:{role['id']}'. Skipping..."
         )
 
 
@@ -199,12 +204,15 @@ role_file_name = (
     "roles_2026-02-27_11-15-56.csv"  # 'Backup Restore Test' role with 1 repo in it
 )
 repo_file_name = "repos_2026-02-27_11-21-47.csv"
+
+login.login_pc_api()
+
 role_url_map = role_url_mapper_function(role_file_name, repo_file_name)
 for role, urls in role_url_map.items():
     # the update function takes a list of repos instead of always reading from a file
     update_role(role, urls)
     print()
-print(f"Completed restoring roles.")
+print("Completed restoring roles.")
 """
 - [x] Can the same user have two onboard two repos with the same name from difference providers github/gitlab?
 

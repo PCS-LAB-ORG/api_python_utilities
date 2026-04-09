@@ -15,7 +15,7 @@ from apu.utils import (
 
 payload = {}
 
-url = f"{login.settings["url"]}/user/role"
+url = f"{login.settings['url']}/user/role"
 
 response = requests.request("GET", url, headers=login.headers, data=payload)
 

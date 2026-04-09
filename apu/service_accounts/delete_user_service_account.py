@@ -3,37 +3,17 @@
 # Primary API Doc link
 # https://pan.dev/prisma-cloud/api/cspm/add-user-v-3/
 
-import os
-import sys
 
 import requests
-from prismacloud.api import pc_api
 
-sys.path.append(os.path.abspath(f".."))
-from creds_lab import PRISMA_ACCESS_KEY, PRISMA_SECRET_KEY
+from apu.utils import login
 
-# Settings for Prisma Cloud Enterprise Edition
-settings = {
-    "url": "https://api2.prismacloud.io",
-    "identity": PRISMA_ACCESS_KEY,
-    "secret": PRISMA_SECRET_KEY,
-}
-# os.environ["PRISMA_ACCESS_KEY"] # using an environment variable
+# id = "<my username>"
+account_id = "miles-service-account-85"
 
-id = "<my username>"
-id = "miles-service-account-85"
-
-url = f"{login.settings["url"]}/user/{id}"
-
-pc_api.configure(settings=settings)
+url = f"{login.settings['url']}/user/{account_id}"
 
 payload = {}
-headers = {
-    "Content-Type": "application/json; charset=UTF-8",
-    "Accept": "*/*",
-    "x-redlock-auth": pc_api.token,
-}
-
 response = requests.request("DELETE", url, headers=login.headers, data=payload)
 response.raise_for_status()
 print(response)

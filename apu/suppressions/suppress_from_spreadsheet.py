@@ -276,7 +276,7 @@ def suppress(file_path=""):
             continue
 
         account_id = finding["Source ID"]  # "jumiles-pa/test-cas-app"
-        file_path = f"/{finding["Code path"]}"  # "/README.md"
+        file_path = f"/{finding['Code path']}"  # "/README.md"
         derived_file_path_with_commit, code_lines = finding_code_line_to_policy_finding(
             finding, policy_list
         )

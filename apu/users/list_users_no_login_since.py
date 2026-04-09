@@ -27,14 +27,14 @@ def list(days_since_login):
             time_difference = current_date - datetime_object
             outdated = time_difference > timedelta(days=days_since_login)
             if outdated:
-                print(f"{user["email"]}, {datetime_object}")
+                print(f"{user['email']}, {datetime_object}")
                 expiring_user_list.append(user)
         except:
             if -1 == user["lastLoginTs"]:
                 # -1 is taken to mean they've never logged in.
-                print(f"{user["email"]}, Never")
+                print(f"{user['email']}, Never")
             else:
-                print(f"{user["email"]}, {user["lastLoginTs"]} UNHANDLED CASE")
+                print(f"{user['email']}, {user['lastLoginTs']} UNHANDLED CASE")
     print(f"\n{len(expiring_user_list)} users that haven't logged in in 180 days")
 
 

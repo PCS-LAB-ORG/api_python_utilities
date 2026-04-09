@@ -7,7 +7,7 @@ import requests
 
 from apu.utils import login  # importing this should trigger the login procedure
 
-url = f"{login.settings["url"]}/uve/api/v3/vulnerabilities/download"
+url = f"{login.settings['url']}/uve/api/v3/vulnerabilities/download"
 
 payload = json.dumps(
     {
@@ -15,7 +15,9 @@ payload = json.dumps(
             {
                 "cveId": "CVE-2021-44228",
                 "riskFactors": "Urgent, Patchable, Exploitable",
-                "assetType": "package,serverlessFunction,iac,deployedImage,vmImage,registryImage,host",
+                "assetType": (
+                    "package,serverlessFunction,iac,deployedImage,vmImage,registryImage,host"
+                ),
             }
         ]
     }

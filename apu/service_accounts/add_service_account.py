@@ -16,7 +16,7 @@ from apu.utils import (
 
 # http_logging.http_logging()
 
-url = f"{login.settings["url"]}/v3/user"
+url = f"{login.settings['url']}/v3/user"
 
 payload = {}
 
@@ -29,7 +29,7 @@ sats = str(timestamp_float).replace(".", "")[:13]  # Get first 13 characters
 
 service_account_role_name = "Reduced Developer Role"
 service_account_role_id = ""
-role_name_url = f"{login.settings["url"]}/user/role"
+role_name_url = f"{login.settings['url']}/user/role"
 role_list_response = requests.request(
     "GET", role_name_url, headers=login.headers, data=payload
 )
@@ -42,7 +42,9 @@ payload = json.dumps(
     {
         "accessKeyExpiration": sats,
         "accessKeyName": "miles-access-key-87",
-        "defaultRoleId": service_account_role_id,  # Use a function to translate a role name here. It does not 'just work' with the role name. confirmed
+        "defaultRoleId": (
+            service_account_role_id
+        ),  # Use a function to translate a role name here. It does not 'just work' with the role name. confirmed
         "enabled": True,
         "enableKeyExpiration": True,
         "timeZone": "America/Los_Angeles",

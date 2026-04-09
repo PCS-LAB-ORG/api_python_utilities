@@ -47,7 +47,7 @@ def create(
     user.update(user_attr)
     payload = json.dumps(user)
     res = pc_api.user_create(payload)
-    print(f"Create User ({user["email"]}) response code: {res}")
+    print(f"Create User ({user['email']}) response code: {res}")
     return res
 
 
@@ -69,7 +69,7 @@ def enable_disable_user(username, enable=True):
     username = ""  # Use to toggle status. Documented as email but, username handles service accounts and users
     enable = str(enable).lower()
 
-    url = f"{login.settings["url"]}/user/{username}/status/{enable}"
+    url = f"{login.settings['url']}/user/{username}/status/{enable}"
     payload = {}
 
     response = requests.request("PATCH", url, headers=login.headers, data=payload)
