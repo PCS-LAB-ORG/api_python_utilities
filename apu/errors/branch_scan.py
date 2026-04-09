@@ -48,7 +48,7 @@ def branch_scan(filename=constants.date_time_format_w_seconds + ".csv", filters=
     page_cutoff = 100
     running_total = 0
     running_error_total = 0
-    while has_next == True:
+    while has_next:
         if not filters:
             payload = json.dumps(
                 {
@@ -94,7 +94,7 @@ def branch_scan(filename=constants.date_time_format_w_seconds + ".csv", filters=
             raise e
         response_text = json.loads(response.text)
         repository_list = response_text["data"]
-        if response_text["hasNext"] == True and page <= page_cutoff:
+        if response_text["hasNext"] and page <= page_cutoff:
             offset += limit
             page += 1
         else:
