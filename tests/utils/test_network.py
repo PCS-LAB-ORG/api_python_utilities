@@ -1,6 +1,7 @@
 # Using unittest.mock to raise a ConnectionError
 from unittest.mock import patch
 
+import pytest
 import requests
 
 from apu.errors import branch_scan
@@ -10,4 +11,5 @@ from apu.errors import branch_scan
 def test_network_failure(mock_get):
     mock_get.side_effect = requests.exceptions.ConnectionError
     # ... test how your code handles the error
+    # with pytest.raises(FileNotFoundError):
     branch_scan.branch_scan()
