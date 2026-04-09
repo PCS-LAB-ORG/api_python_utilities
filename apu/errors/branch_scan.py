@@ -125,8 +125,8 @@ def parse_repo_list(repository_list, filename):
                 csv_writer.writerow(repo_obj)
                 global total_finding_count
                 total_finding_count += 1
-            except UnicodeEncodeError as e:
-                write_exception(repository_list.index(repo), repo)
+            except UnicodeEncodeError:
+                write_exception(repo)
                 parsed_row = parse_for_category(repo)
                 csv_writer.writerow(parsed_row)
                 error_count += 1
@@ -144,7 +144,7 @@ def clean_columns(repo):
         )
 
 
-def write_exception(index, repo):
+def write_exception(repo):
     """
     The function to remove non-unicode encoded characters. Notice that if there is any key/value error it will blank the value
     and write to the error file and logs.
@@ -153,13 +153,13 @@ def write_exception(index, repo):
         for key in repo.keys():
             try:
                 err_file.write(f"{repo[key]}, ")
-            except:
+            except Exception:
                 value = ""
                 for c in str(repo[key]):
                     try:
                         err_file.write(c)
                         value += c
-                    except Exception as e:
+                    except Exception:
                         if c == "́":
                             continue
                         if c == "ą":
@@ -176,7 +176,7 @@ def write_exception(index, repo):
                     err_file.write(f"{value}, ")
                     repo[key] = value
 
-                except:
+                except Exception:
                     err_file.write(f"<{key} error>, ")
                     repo[key] = f"<{key} error>"
                     global total_error_count

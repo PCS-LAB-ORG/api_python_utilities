@@ -1,9 +1,8 @@
 #!python
 
+from pcpi import session_loader
 
 url = "https://api.prismacloud.io/api/v34.00/tags"
-
-from pcpi import session_loader
 
 session_managers = session_loader.load_config(
     file_path="/Users/jumiles/.prismacloud/lab_credentials.json"

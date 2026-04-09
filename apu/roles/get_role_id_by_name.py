@@ -7,7 +7,7 @@ import requests
 
 from apu.utils import (
     login,
-    http_logging,
+    # http_logging,
 )  # importing this should trigger the login procedure
 
 # http_logging.http_logging()
@@ -15,7 +15,9 @@ from apu.utils import (
 
 payload = {}
 
-response = requests.request("GET", url, headers=login.headers, data=payload)
+response = requests.request(
+    "GET", f"{login.settings['url']}/role", headers=login.headers, data=payload
+)
 
 json_role = json.loads(response.text)
 for role in json_role:
