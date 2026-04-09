@@ -36,7 +36,7 @@ if not os.path.exists(script_dir):
 
 # https://pan.dev/prisma-cloud/api/code/get-periodic-findings/
 # https://pypi.org/project/grequests/
-def branch_scan(filters=None):
+def branch_scan(filename=constants.date_time_format_w_seconds + ".csv", filters=None):
     url = f"{login.settings['url']}/code/api/v2/code-issues/branch_scan"
 
     # http_logging()
@@ -99,7 +99,7 @@ def branch_scan(filters=None):
             page += 1
         else:
             has_next = False
-        errors = parse_repo_list(repository_list)
+        errors = parse_repo_list(repository_list, filename)
         running_error_total += errors
         running_total += len(repository_list)
         logger.info(
@@ -107,7 +107,7 @@ def branch_scan(filters=None):
         )
 
 
-def parse_repo_list(repository_list):
+def parse_repo_list(repository_list, filename):
     with open(filename, "a+", newline="") as csv_file:
         error_count = 0
         finding_count = 0
@@ -276,7 +276,9 @@ def parse_for_category(repo):
         "Code path": code_path,
         "Code issue line": lines,
         "Git user": git_user,
-        "Details": f"https://app2.prismacloud.io/projects?viewId=overview&checkStatus=Error&repository={repo['repository']}",
+        "Details": (
+            f"https://app2.prismacloud.io/projects?viewId=overview&checkStatus=Error&repository={repo['repository']}"
+        ),
         "License Type": license_type,
         "CWE": cwes,
         "Compliance": compliance,
@@ -288,12 +290,11 @@ def parse_for_category(repo):
     return key_map
 
 
+write_header = True
+total_finding_count = 0
+total_error_count = 0
+
 if __name__ == "__main__":
-    filename = constants.date_time_format_w_seconds + ".csv"
-    write_header = True
-    total_finding_count = 0
-    total_error_count = 0
-    category_started = set()
     branch_scan()
     logger.info(
         f"Total findings {total_finding_count}. Total errors {total_error_count}"
