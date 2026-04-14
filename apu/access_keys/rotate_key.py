@@ -58,10 +58,16 @@ inform a second execution of the script.
 
 import argparse
 import json
+import sys
+from datetime import datetime, timedelta
 
 # import pprint
 import requests
 from prismacloud.api import pc_api
+
+from apu.utils import login
+from apu.users import core as users
+from apu.access_keys import core as keys
 
 parser = argparse.ArgumentParser(description="Rotate Prisma access keys.")
 group = parser.add_mutually_exclusive_group(required=True)
@@ -123,7 +129,7 @@ elif args.access_key_file:
     access_key = line.split(",")[1].removesuffix("\n")
 
 if not access_key and not args.service_account:
-    quit("Either access key, access key file, or service account must be given.")
+    sys.exit("Either access key, access key file, or service account must be given.")
 
 # ALT user credentials solution
 if args.DOMAIN:
@@ -136,25 +142,16 @@ if args.PRISMA_SECRET_KEY:
 settings = {"url": DOMAIN, "identity": PRISMA_ACCESS_KEY, "secret": PRISMA_SECRET_KEY}
 
 if access_key == args.PRISMA_ACCESS_KEY or settings["identity"] == access_key:
-    quit(
+    sys.exit(
         "This script needs user credentials to execute the APIs to update a separate access key"
     )
 
-# os.environ["PRISMA_ACCESS_KEY"] # using an environment variable
-
-pc_api.configure(settings=settings)
 payload = ""
-headers = {
-    "Content-Type": "application/json; charset=UTF-8",
-    "Accept": "*/*",
-    "x-redlock-auth": pc_api.token,
-}
 
 
 def days_to_timestamp(days):
     # future_date_utc = datetime(2026, 1, 1, 10, 30, 0)
     # Year, Month, Day, Hour, Minute, Second
-    from datetime import datetime, timedelta
 
     # Get today's date
     current_datetime = datetime.now()
@@ -179,7 +176,7 @@ for key in access_key_list:
 if not exists:
     print(f"access key {access_key} not found.")
     if not args.service_account:
-        quit(f"--service_account is required if access key cannot be looked up.")
+        sys.exit("--service_account is required if access key cannot be looked up.")
 
 user_list = users.get()
 
@@ -198,7 +195,7 @@ for user in user_list:
         # service account and user's email otherwise
         if user["username"] == key["createdBy"]:
             if user["type"] != "SERVICE_ACCOUNT":
-                quit(
+                sys.exit(
                     f"Only service accounts can be used. {args.service_account} is type {user['type']}"
                 )
             print(f"Matched user:key on username {user['username']}")
@@ -221,12 +218,12 @@ for user in user_list:
 # This assumes that service account can only be changed by creator. SOC creates them
 # currently so this may not make sense.
 # if found_key["createdBy"] != args.service_account:
-#     quit(f"--service_account {args.service_account} is not the owner of this key")
+#     sys.exit(f"--service_account {args.service_account} is not the owner of this key")
 
 if key_name == "":
     # Handle no matching key
     if len(user_key_list) == 2:
-        quit(
+        sys.exit(
             "This service account already has 2 other access keys which is the limit. Must give a specific key to rotate."
         )
     res = ""
@@ -241,12 +238,12 @@ if key_name == "":
         else:
             key_name = "My Key"
     else:
-        quit()
+        sys.exit()
 else:
     # Delete the key by {access_key}
     # Check that error codes make sense for use or parse and print
     if args.force or "y" != input(f"Delete key {access_key}?\n(y) >>> "):
-        quit()
+        sys.exit()
     url = f"{login.settings['url']}/access_keys/{access_key}"
     response = requests.request("DELETE", url, headers=login.headers, data=payload)
     response.raise_for_status()
