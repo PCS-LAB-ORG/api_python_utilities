@@ -4,7 +4,8 @@ import requests
 from prismacloud.api import pc_api
 
 from apu.utils import files, login
-from apu.utils import core
+
+# from apu.utils import core
 
 
 def get():
@@ -53,7 +54,7 @@ def create(
 
 def create_from_user_csv(file_name):
     for user in files.read_csv(file_name):
-        core.create_user(user)
+        create_user(user)
 
 
 def enable_disable_user(username, enable=True):

@@ -4,7 +4,6 @@
 # pip install pprintpp requests prismacloud-api
 
 import json
-import pprint
 
 import requests
 
@@ -19,8 +18,8 @@ def get_vcs_repository_page(data=""):
     response = requests.request("POST", url, headers=login.headers, data=data)
     response.raise_for_status()
     repository_list = json.loads(response.text)
-    for repo in repository_list:
-        pprint.pprint(repo)
+    # for repo in repository_list:
+    #     pprint.pprint(repo)
     return repository_list
 
 
