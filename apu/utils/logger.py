@@ -6,8 +6,14 @@ This is made to be simple and handle many simple uses and be built
 upon as needed.
 """
 
+from datetime import datetime
+from functools import partial
+import inspect
 import logging
+import os
 import re
+
+from apu.utils import constants
 
 
 def setup_logger(log_file_name="app.log"):
@@ -51,3 +57,34 @@ class MaskSensitiveDataFilter(logging.Filter):
         record.msg = masked_message
         record.args = ()
         return True
+
+
+class Logger:
+    """General custom logger solution"""
+
+    log_file_name = (
+        f"{constants.script_dir}/output_{constants.date_time_format_w_seconds}.log"
+    )
+
+    def __init__(self, log_file_name):
+        if log_file_name:
+            self.log_file_name = log_file_name
+
+    def log(self, line, exception="", level="INFO ") -> None:
+        now = datetime.now()
+        caller_frame = inspect.stack()[1]
+        file_path = os.path.relpath(caller_frame.filename)
+        with open(self.log_file_name, "+a", newline="") as log_file:
+            # To File
+            print(
+                f"{level}{now} {file_path}:{caller_frame.lineno} {line}",
+                exception,
+                file=log_file,
+            )
+
+            # To Console
+            print(f"{level}{now} {file_path}:{caller_frame.lineno} {line}", exception)
+
+    debug = partial(log, level="DEBUG ")
+    error = partial(log, level="ERROR ")
+    warn = partial(log, level="WARN ")
