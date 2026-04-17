@@ -4,13 +4,35 @@
 # Prerequisite packages to run this script.
 # pip install pprintpp requests prismacloud-api
 import json
+from dataclasses import dataclass
+from dacite import from_dict
 import requests
 from prismacloud.api import pc_api
 
 from apu.utils import login  # importing this should trigger the login procedure
 
 
-def list(role=None):
+@dataclass
+class role:
+    id: str
+    name: str
+    description: str | None
+    lastModifiedBy: str
+    lastModifiedTs: int
+    accountGroupIds: list[str]
+    resourceListIds: list[str]
+    codeRepositoryIds: list[str]
+    associatedUsers: list
+    restrictDismissalAccess: bool
+    additionalAttributes: dict[str, bool]
+    accountGroups: list[dict]
+    resourceLists: list[dict]
+    codeRepositories: list[dict[str, str]]
+    roleType: str
+    permissionGroup: str | None = None
+
+
+def list_roles(role=None):
     url = f"{login.settings['url']}/user/role"
 
     response = requests.request("GET", url, headers=login.headers)
@@ -30,3 +52,24 @@ def update_user(user, user_dict=None):
         user.update(user_dict)
     pc_api.user_update(user)
     return user
+
+
+def special_list_roles():
+    url = f"{login.settings['url']}/user/role"
+
+    response = requests.request("GET", url, headers=login.headers)
+    response.raise_for_status()
+    role_list = json.loads(response.text)
+    roles = []
+    for js_role in role_list:
+        roles.append(json_to_role(js_role))
+    return roles
+
+
+def json_to_role(data=None):
+    return from_dict(data_class=role, data=data)
+
+
+if __name__ == "__main__":
+    login.login()
+    print(special_list_roles())
